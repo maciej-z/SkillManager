@@ -20,6 +20,26 @@ const updateProfileSchema = z
     message: "At least one of role or manager_id must be provided",
   });
 
+interface ManagerLink {
+  id: string;
+  manager_id: string;
+}
+
+async function fetchManagerLink(
+  supabase: ReturnType<typeof createClient>,
+  profileId: string,
+): Promise<{ node: ManagerLink | null; error: string | null }> {
+  if (!supabase) {
+    return { node: null, error: "Supabase is not configured" };
+  }
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("id, manager_id")
+    .eq("id", profileId)
+    .maybeSingle<ManagerLink>();
+  return { node: data ?? null, error: error?.message ?? null };
+}
+
 export const PATCH: APIRoute = async (context) => {
   if (context.locals.profile?.role !== "admin") {
     return new Response(JSON.stringify({ error: "Forbidden" }), { status: 403 });
@@ -38,6 +58,29 @@ export const PATCH: APIRoute = async (context) => {
   const parsed = updateProfileSchema.safeParse(await context.request.json());
   if (!parsed.success) {
     return new Response(JSON.stringify({ error: z.treeifyError(parsed.error) }), { status: 400 });
+  }
+
+  // Reassigning to self is the documented "hierarchy root" convention, not a
+  // cycle. Any other target needs its ancestor chain walked to make sure it
+  // doesn't loop back to targetId.
+  if (parsed.data.manager_id && parsed.data.manager_id !== targetId) {
+    const maxHops = 50;
+    let currentId: string | null = parsed.data.manager_id;
+    for (let hop = 0; currentId && hop < maxHops; hop++) {
+      if (currentId === targetId) {
+        return new Response(JSON.stringify({ error: "This reassignment would create a manager cycle" }), {
+          status: 400,
+        });
+      }
+      const { node, error: chainError } = await fetchManagerLink(supabase, currentId);
+      if (chainError) {
+        return new Response(JSON.stringify({ error: chainError }), { status: 400 });
+      }
+      if (!node || node.id === node.manager_id) {
+        break; // dangling reference (FK will reject it below) or a hierarchy root
+      }
+      currentId = node.manager_id;
+    }
   }
 
   // RLS profiles_update_admin_only is the real enforcement boundary; the role

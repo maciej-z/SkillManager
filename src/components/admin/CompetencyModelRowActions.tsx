@@ -54,7 +54,13 @@ export default function CompetencyModelRowActions({ model }: Props) {
               Activate
             </Button>
           )}
-          <Button size="sm" variant="destructive" disabled={busy} onClick={remove}>
+          <Button
+            size="sm"
+            variant="destructive"
+            disabled={busy || model.is_active}
+            title={model.is_active ? "Activate a replacement before deleting this model" : undefined}
+            onClick={remove}
+          >
             Delete
           </Button>
           {error && <span className="text-destructive text-xs">{error}</span>}

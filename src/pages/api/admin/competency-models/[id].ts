@@ -34,13 +34,14 @@ export const PATCH: APIRoute = async (context) => {
   }
 
   if (parsed.data.is_active) {
-    const { error: deactivateError } = await supabase
-      .from("competency_models")
-      .update({ is_active: false })
-      .eq("is_active", true)
-      .neq("id", targetId);
-    if (deactivateError) {
-      return new Response(JSON.stringify({ error: deactivateError.message }), { status: 400 });
+    // Single atomic statement: activates this row and deactivates every
+    // other row in one transaction, so no request can observe zero or two
+    // active models.
+    const { error: activateError } = await supabase.rpc("activate_competency_model", {
+      target_id: targetId,
+    });
+    if (activateError) {
+      return new Response(JSON.stringify({ error: activateError.message }), { status: 400 });
     }
   }
 
@@ -65,6 +66,21 @@ export const DELETE: APIRoute = async (context) => {
   const targetId = context.params.id;
   if (!targetId) {
     return new Response(JSON.stringify({ error: "Missing competency model id" }), { status: 400 });
+  }
+
+  const { data: existing, error: fetchError } = await supabase
+    .from("competency_models")
+    .select("is_active")
+    .eq("id", targetId)
+    .maybeSingle<{ is_active: boolean }>();
+  if (fetchError) {
+    return new Response(JSON.stringify({ error: fetchError.message }), { status: 400 });
+  }
+  if (existing?.is_active) {
+    return new Response(
+      JSON.stringify({ error: "Cannot delete the active competency model — activate a replacement first" }),
+      { status: 400 },
+    );
   }
 
   const { error } = await supabase.from("competency_models").delete().eq("id", targetId);

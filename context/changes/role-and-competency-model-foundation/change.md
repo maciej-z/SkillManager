@@ -1,7 +1,7 @@
 ---
 change_id: role-and-competency-model-foundation
 title: Role and competency model foundation
-status: implemented
+status: impl_reviewed
 created: 2026-09-13
 updated: 2026-09-13
 archived_at: null

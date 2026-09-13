@@ -6,12 +6,16 @@ import type { Profile } from "@/types";
 
 const supabase = createClient(Astro.request.headers, Astro.cookies);
 let profiles: Profile[] = [];
+let loadError: string | null = null;
 if (supabase) {
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("profiles")
     .select("*")
     .order("full_name")
     .overrideTypes<Profile[], { merge: false }>();
+  if (error) {
+    loadError = error.message;
+  }
   profiles = data ?? [];
 }
 ---
@@ -20,6 +24,7 @@ if (supabase) {
   <div class="mx-auto max-w-4xl p-8">
     <a href="/admin" class="text-sm text-blue-600 hover:underline">&larr; Admin</a>
     <h1 class="my-4 text-2xl font-bold">Profiles</h1>
+    {loadError && <p class="mb-4 text-sm text-red-600">Failed to load profiles: {loadError}</p>}
     {
       /*
         client:only, not client:load: shadcn's Select (radix-ui) crashes during

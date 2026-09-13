@@ -48,27 +48,30 @@ export const POST: APIRoute = async (context) => {
     return new Response(JSON.stringify({ error: z.treeifyError(parsed.error) }), { status: 400 });
   }
 
-  // Activating a new model deactivates whichever one was active — app-level,
-  // backstopped by the partial unique index on competency_models(is_active).
-  if (parsed.data.is_active) {
-    const { error: deactivateError } = await supabase
-      .from("competency_models")
-      .update({ is_active: false })
-      .eq("is_active", true);
-    if (deactivateError) {
-      return new Response(JSON.stringify({ error: deactivateError.message }), { status: 400 });
-    }
-  }
-
+  // Insert as inactive first, then flip activation atomically below — an
+  // insert with is_active: true would race the partial unique index against
+  // whichever row is currently active.
   const { data, error } = await supabase
     .from("competency_models")
-    .insert(parsed.data)
+    .insert({ ...parsed.data, is_active: false })
     .select()
-    .single()
-    .overrideTypes<CompetencyModel, { merge: false }>();
+    .single<CompetencyModel>();
 
   if (error) {
     return new Response(JSON.stringify({ error: error.message }), { status: 400 });
+  }
+
+  if (parsed.data.is_active) {
+    // Single atomic statement: activates this row and deactivates every
+    // other row in one transaction, so no request can observe zero or two
+    // active models.
+    const { error: activateError } = await supabase.rpc("activate_competency_model", {
+      target_id: data.id,
+    });
+    if (activateError) {
+      return new Response(JSON.stringify({ error: activateError.message }), { status: 400 });
+    }
+    data.is_active = true;
   }
 
   return new Response(JSON.stringify(data), { status: 201 });

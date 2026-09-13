@@ -18,8 +18,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
         .from("profiles")
         .select("*")
         .eq("id", context.locals.user.id)
-        .maybeSingle()
-        .overrideTypes<Profile, { merge: false }>();
+        .maybeSingle<Profile>();
       context.locals.profile = profile;
     } else {
       context.locals.profile = null;

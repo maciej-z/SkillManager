@@ -10,25 +10,32 @@ import type { CompetencyModel, Competency } from "@/types";
 const supabase = createClient(Astro.request.headers, Astro.cookies);
 let models: CompetencyModel[] = [];
 let competencies: Competency[] = [];
+let loadError: string | null = null;
 
 if (supabase) {
-  const { data: modelData } = await supabase
+  const { data: modelData, error: modelError } = await supabase
     .from("competency_models")
     .select("*")
     .order("version", { ascending: false })
     .overrideTypes<CompetencyModel[], { merge: false }>();
+  if (modelError) {
+    loadError = modelError.message;
+  }
   models = modelData ?? [];
 }
 
 const activeModel = models.find((model) => model.is_active);
 
 if (supabase && activeModel) {
-  const { data: competencyData } = await supabase
+  const { data: competencyData, error: competencyError } = await supabase
     .from("competencies")
     .select("*")
     .eq("competency_model_id", activeModel.id)
     .order("name")
     .overrideTypes<Competency[], { merge: false }>();
+  if (competencyError) {
+    loadError = loadError ?? competencyError.message;
+  }
   competencies = competencyData ?? [];
 }
 
@@ -39,6 +46,7 @@ const nextVersion = models.length > 0 ? Math.max(...models.map((model) => model.
   <div class="mx-auto max-w-4xl p-8">
     <a href="/admin" class="text-sm text-blue-600 hover:underline">&larr; Admin</a>
     <h1 class="my-4 text-2xl font-bold">Competency Model</h1>
+    {loadError && <p class="mb-4 text-sm text-red-600">Failed to load competency data: {loadError}</p>}
 
     <CreateCompetencyModelForm client:load nextVersion={nextVersion} />
 

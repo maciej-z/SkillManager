@@ -26,7 +26,7 @@ export default function CompetencyRowEditor({ competency }: Props) {
     const res = await fetch(`/api/admin/competencies/${competency.id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, description, expected_proficiency_level: level }),
+      body: JSON.stringify({ name, description: description || undefined, expected_proficiency_level: level }),
     });
     setSaving(false);
     if (res.ok) {
