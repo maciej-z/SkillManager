@@ -303,23 +303,23 @@ This is the first migration in the project; no existing data to migrate. `supaba
 
 #### Automated
 
-- [x] 3.1 `npm run lint` passes
-- [x] 3.2 `npm run build` passes
+- [x] 3.1 `npm run lint` passes — da49d09
+- [x] 3.2 `npm run build` passes — da49d09
 
 #### Manual
 
-- [x] 3.3 Admin requests succeed with expected responses across all routes
-- [x] 3.4 Non-admin requests are rejected (403/redirect) across all routes
+- [x] 3.3 Admin requests succeed with expected responses across all routes — da49d09
+- [x] 3.4 Non-admin requests are rejected (403/redirect) across all routes — da49d09
 
 ### Phase 4: Admin UI
 
 #### Automated
 
-- [ ] 4.1 `npm run lint` passes
-- [ ] 4.2 `npm run build` passes
+- [x] 4.1 `npm run lint` passes
+- [x] 4.2 `npm run build` passes
 
 #### Manual
 
-- [ ] 4.3 Admin reassigns a profile's manager via UI, change persists
-- [ ] 4.4 Admin creates/activates a competency model version and manages its competencies via UI
-- [ ] 4.5 Non-admin cannot reach `/admin/*` pages
+- [x] 4.3 Admin reassigns a profile's manager via UI, change persists
+- [x] 4.4 Admin creates/activates a competency model version and manages its competencies via UI
+- [x] 4.5 Non-admin cannot reach `/admin/*` pages

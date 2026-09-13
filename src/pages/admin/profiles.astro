@@ -1,0 +1,33 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { createClient } from "@/lib/supabase";
+import ProfilesTable from "@/components/admin/ProfilesTable";
+import type { Profile } from "@/types";
+
+const supabase = createClient(Astro.request.headers, Astro.cookies);
+let profiles: Profile[] = [];
+if (supabase) {
+  const { data } = await supabase
+    .from("profiles")
+    .select("*")
+    .order("full_name")
+    .overrideTypes<Profile[], { merge: false }>();
+  profiles = data ?? [];
+}
+---
+
+<Layout title="Manage Profiles">
+  <div class="mx-auto max-w-4xl p-8">
+    <a href="/admin" class="text-sm text-blue-600 hover:underline">&larr; Admin</a>
+    <h1 class="my-4 text-2xl font-bold">Profiles</h1>
+    {
+      /*
+        client:only, not client:load: shadcn's Select (radix-ui) crashes during
+        Astro dev's SSR pass — a dev-server-only Vite dependency-optimization
+        quirk (production `astro build` renders it fine). Skipping SSR for this
+        island sidesteps it; acceptable for an auth-gated admin panel.
+      */
+    }
+    <ProfilesTable client:only="react" profiles={profiles} />
+  </div>
+</Layout>

@@ -1,0 +1,61 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { createClient } from "@/lib/supabase";
+import CreateCompetencyModelForm from "@/components/admin/CreateCompetencyModelForm";
+import CompetencyModelsTable from "@/components/admin/CompetencyModelsTable";
+import CreateCompetencyForm from "@/components/admin/CreateCompetencyForm";
+import CompetenciesTable from "@/components/admin/CompetenciesTable";
+import type { CompetencyModel, Competency } from "@/types";
+
+const supabase = createClient(Astro.request.headers, Astro.cookies);
+let models: CompetencyModel[] = [];
+let competencies: Competency[] = [];
+
+if (supabase) {
+  const { data: modelData } = await supabase
+    .from("competency_models")
+    .select("*")
+    .order("version", { ascending: false })
+    .overrideTypes<CompetencyModel[], { merge: false }>();
+  models = modelData ?? [];
+}
+
+const activeModel = models.find((model) => model.is_active);
+
+if (supabase && activeModel) {
+  const { data: competencyData } = await supabase
+    .from("competencies")
+    .select("*")
+    .eq("competency_model_id", activeModel.id)
+    .order("name")
+    .overrideTypes<Competency[], { merge: false }>();
+  competencies = competencyData ?? [];
+}
+
+const nextVersion = models.length > 0 ? Math.max(...models.map((model) => model.version)) + 1 : 1;
+---
+
+<Layout title="Manage Competency Model">
+  <div class="mx-auto max-w-4xl p-8">
+    <a href="/admin" class="text-sm text-blue-600 hover:underline">&larr; Admin</a>
+    <h1 class="my-4 text-2xl font-bold">Competency Model</h1>
+
+    <CreateCompetencyModelForm client:load nextVersion={nextVersion} />
+
+    <div class="mt-6">
+      <CompetencyModelsTable client:load models={models} />
+    </div>
+
+    {
+      activeModel && (
+        <>
+          <h2 class="mt-10 mb-4 text-xl font-semibold">Competencies (v{activeModel.version}, active)</h2>
+          <CreateCompetencyForm client:load competencyModelId={activeModel.id} />
+          <div class="mt-4">
+            <CompetenciesTable client:load competencies={competencies} />
+          </div>
+        </>
+      )
+    }
+  </div>
+</Layout>
