@@ -42,7 +42,7 @@ Employees and their Competence Leaders currently have no structured way to asses
 | ---- | ----------------------------------- | ---------------------------------------------------------------------------- | -------------- | ------------------------------------------------ | -------- |
 | F-01 | role-and-competency-model-foundation | (foundation) roles, leader→report links, and the competency model are in place | —              | FR-001, FR-002, Access Control                    | done |
 | S-01 | employee-self-assessment             | view the competency model and complete + submit a self-assessment            | F-01           | FR-001, FR-002, FR-003, FR-004, FR-005, FR-006, FR-007 | in-progress |
-| S-02 | leader-review-and-approval           | (as leader) review a report's submitted assessment and approve or return it  | S-01, F-01     | FR-008, FR-009, FR-010, FR-011, FR-012            | proposed |
+| S-02 | leader-review-and-approval           | (as leader) review a report's submitted assessment and approve or return it  | S-01, F-01     | FR-008, FR-009, FR-010, FR-011, FR-012            | planning |
 | S-03 | ai-development-plan                  | see the AI-generated development plan built from approved gaps               | S-02           | FR-013, FR-014, FR-015, FR-016, FR-017, US-01      | proposed |
 
 ## Baseline
@@ -96,7 +96,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Depends on a real submitted assessment (S-01) and the leader→report relationship (F-01). Approval is the guardrail the PRD calls non-bypassable — it has to land before any plan-generation logic can be trusted to consume "approved" data.
-- **Status:** proposed
+- **Status:** planning
 
 ### S-03: Employee (and leader) receive the AI-generated development plan
 
