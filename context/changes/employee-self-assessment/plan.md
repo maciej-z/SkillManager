@@ -273,28 +273,28 @@ Additive migration on top of F-01's schema; no existing assessment data to migra
 
 #### Automated
 
-- [x] 2.1 `npm run lint` passes
-- [x] 2.2 `npx astro check` passes (0 errors)
-- [x] 2.3 `npm run build` passes
+- [x] 2.1 `npm run lint` passes — c53e2ce
+- [x] 2.2 `npx astro check` passes (0 errors) — c53e2ce
+- [x] 2.3 `npm run build` passes — c53e2ce
 
 #### Manual
 
-- [x] 2.4 Alice can save remaining scores and then submit successfully
-- [x] 2.5 Submitting with missing scores returns 400 with the missing count
-- [x] 2.6 Bob's save-scores and submit requests are both rejected
+- [x] 2.4 Alice can save remaining scores and then submit successfully — c53e2ce
+- [x] 2.5 Submitting with missing scores returns 400 with the missing count — c53e2ce
+- [x] 2.6 Bob's save-scores and submit requests are both rejected — c53e2ce
 
 ### Phase 3: Employee UI
 
 #### Automated
 
-- [ ] 3.1 `npm run lint` passes
-- [ ] 3.2 `npx astro check` passes (0 errors)
-- [ ] 3.3 `npm run build` passes
+- [x] 3.1 `npm run lint` passes
+- [x] 3.2 `npx astro check` passes (0 errors)
+- [x] 3.3 `npm run build` passes
 
 #### Manual
 
-- [ ] 3.4 Start-assessment flow works end to end for a fresh employee
-- [ ] 3.5 Partial save persists correctly with an accurate N-of-M count and disabled Submit
-- [ ] 3.6 Full scoring enables Submit and transitions to the read-only submitted view
-- [ ] 3.7 Bob's pre-seeded submitted assessment renders read-only with no editable controls
-- [ ] 3.8 `astro dev` renders the radio-group island correctly (or the documented fallback was applied and verified)
+- [x] 3.4 Start-assessment flow works end to end for a fresh employee
+- [x] 3.5 Partial save persists correctly with an accurate N-of-M count and disabled Submit
+- [x] 3.6 Full scoring enables Submit and transitions to the read-only submitted view
+- [x] 3.7 Bob's pre-seeded submitted assessment renders read-only with no editable controls
+- [x] 3.8 `astro dev` renders the radio-group island correctly (or the documented fallback was applied and verified)
