@@ -287,14 +287,14 @@ Additive migration on top of F-01's schema; no existing assessment data to migra
 
 #### Automated
 
-- [x] 3.1 `npm run lint` passes
-- [x] 3.2 `npx astro check` passes (0 errors)
-- [x] 3.3 `npm run build` passes
+- [x] 3.1 `npm run lint` passes — 881d5ed
+- [x] 3.2 `npx astro check` passes (0 errors) — 881d5ed
+- [x] 3.3 `npm run build` passes — 881d5ed
 
 #### Manual
 
-- [x] 3.4 Start-assessment flow works end to end for a fresh employee
-- [x] 3.5 Partial save persists correctly with an accurate N-of-M count and disabled Submit
-- [x] 3.6 Full scoring enables Submit and transitions to the read-only submitted view
-- [x] 3.7 Bob's pre-seeded submitted assessment renders read-only with no editable controls
-- [x] 3.8 `astro dev` renders the radio-group island correctly (or the documented fallback was applied and verified)
+- [x] 3.4 Start-assessment flow works end to end for a fresh employee — 881d5ed
+- [x] 3.5 Partial save persists correctly with an accurate N-of-M count and disabled Submit — 881d5ed
+- [x] 3.6 Full scoring enables Submit and transitions to the read-only submitted view — 881d5ed
+- [x] 3.7 Bob's pre-seeded submitted assessment renders read-only with no editable controls — 881d5ed
+- [x] 3.8 `astro dev` renders the radio-group island correctly (or the documented fallback was applied and verified) — 881d5ed
