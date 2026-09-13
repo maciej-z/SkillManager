@@ -34,6 +34,11 @@ export const POST: APIRoute = async (context) => {
     .select()
     .single<Assessment>();
   if (error) {
+    if (error.code === "23505") {
+      return new Response(JSON.stringify({ error: "You already have an assessment for this competency model" }), {
+        status: 409,
+      });
+    }
     return new Response(JSON.stringify({ error: error.message }), { status: 400 });
   }
 

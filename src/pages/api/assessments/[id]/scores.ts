@@ -51,6 +51,25 @@ export const PATCH: APIRoute = async (context) => {
     return new Response(JSON.stringify({ error: "Forbidden" }), { status: 403 });
   }
 
+  const requestedIds = parsed.data.scores.map((s) => s.competency_id);
+  const { data: validCompetencies, error: competencyError } = await supabase
+    .from("competencies")
+    .select("id")
+    .eq("competency_model_id", assessment.competency_model_id)
+    .in("id", requestedIds)
+    .overrideTypes<{ id: string }[], { merge: false }>();
+  if (competencyError) {
+    return new Response(JSON.stringify({ error: competencyError.message }), { status: 400 });
+  }
+  const validIds = new Set(validCompetencies.map((c) => c.id));
+  const invalidIds = requestedIds.filter((id) => !validIds.has(id));
+  if (invalidIds.length > 0) {
+    return new Response(
+      JSON.stringify({ error: `These competencies don't belong to this assessment's model: ${invalidIds.join(", ")}` }),
+      { status: 400 },
+    );
+  }
+
   const rows = parsed.data.scores.map((s) => ({ assessment_id: assessmentId, ...s }));
   const { error } = await supabase
     .from("assessment_scores")

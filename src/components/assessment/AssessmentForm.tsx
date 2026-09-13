@@ -45,7 +45,7 @@ export default function AssessmentForm({ assessmentId, competencies, existingSco
     setEntries((prev) => ({ ...prev, [competencyId]: { score: "", ...prev[competencyId], comment } }));
   }
 
-  async function handleSaveDraft() {
+  async function handleSaveDraft(): Promise<boolean> {
     setSaving(true);
     setError(null);
     const scores = competencies
@@ -64,13 +64,19 @@ export default function AssessmentForm({ assessmentId, competencies, existingSco
     setSaving(false);
     if (!res.ok) {
       setError("Failed to save draft");
+      return false;
     }
+    return true;
   }
 
   async function handleSubmit() {
     setSubmitting(true);
     setError(null);
-    await handleSaveDraft();
+    const saved = await handleSaveDraft();
+    if (!saved) {
+      setSubmitting(false);
+      return;
+    }
     const res = await fetch(`/api/assessments/${assessmentId}/submit`, { method: "PATCH" });
     setSubmitting(false);
     if (res.ok) {
