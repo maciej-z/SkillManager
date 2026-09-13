@@ -25,3 +25,25 @@ export interface Competency {
   expected_proficiency_level: number;
   created_at: string;
 }
+
+export type AssessmentStatus = "draft" | "submitted";
+
+export interface Assessment {
+  id: string;
+  employee_id: string;
+  competency_model_id: string;
+  status: AssessmentStatus;
+  submitted_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface AssessmentScore {
+  id: string;
+  assessment_id: string;
+  competency_id: string;
+  score: number;
+  comment: string | null;
+  created_at: string;
+  updated_at: string;
+}

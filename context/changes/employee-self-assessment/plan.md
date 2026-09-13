@@ -260,28 +260,28 @@ Additive migration on top of F-01's schema; no existing assessment data to migra
 
 #### Automated
 
-- [x] 1.1 `npx supabase db reset` applies migration and seed with exit code 0
-- [x] 1.2 `npm run lint` passes
-- [x] 1.3 `npx astro check` passes (0 errors)
+- [x] 1.1 `npx supabase db reset` applies migration and seed with exit code 0 — 97aac55
+- [x] 1.2 `npm run lint` passes — 97aac55
+- [x] 1.3 `npx astro check` passes (0 errors) — 97aac55
 
 #### Manual
 
-- [x] 1.4 Supabase Studio: Alice's assessment shows 2/6 scored + draft, Bob's shows 6/6 scored + submitted
-- [x] 1.5 Bob's submitted assessment rejects further writes at the RLS layer
+- [x] 1.4 Supabase Studio: Alice's assessment shows 2/6 scored + draft, Bob's shows 6/6 scored + submitted — 97aac55
+- [x] 1.5 Bob's submitted assessment rejects further writes at the RLS layer — 97aac55
 
 ### Phase 2: Shared types and API routes
 
 #### Automated
 
-- [ ] 2.1 `npm run lint` passes
-- [ ] 2.2 `npx astro check` passes (0 errors)
-- [ ] 2.3 `npm run build` passes
+- [x] 2.1 `npm run lint` passes
+- [x] 2.2 `npx astro check` passes (0 errors)
+- [x] 2.3 `npm run build` passes
 
 #### Manual
 
-- [ ] 2.4 Alice can save remaining scores and then submit successfully
-- [ ] 2.5 Submitting with missing scores returns 400 with the missing count
-- [ ] 2.6 Bob's save-scores and submit requests are both rejected
+- [x] 2.4 Alice can save remaining scores and then submit successfully
+- [x] 2.5 Submitting with missing scores returns 400 with the missing count
+- [x] 2.6 Bob's save-scores and submit requests are both rejected
 
 ### Phase 3: Employee UI
 
