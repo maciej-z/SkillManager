@@ -36,10 +36,29 @@ on conflict (id) do update set
 insert into public.competency_models (id, version, is_active) values
   ('66666666-6666-6666-6666-666666666666', 1, true);
 
-insert into public.competencies (competency_model_id, name, description, expected_proficiency_level) values
-  ('66666666-6666-6666-6666-666666666666', 'Communication', 'Clearly conveys ideas and listens actively', 3),
-  ('66666666-6666-6666-6666-666666666666', 'Problem Solving', 'Breaks down and resolves complex problems', 4),
-  ('66666666-6666-6666-6666-666666666666', 'Technical Craft', 'Depth and quality of technical execution', 4),
-  ('66666666-6666-6666-6666-666666666666', 'Collaboration', 'Works effectively across teams', 3),
-  ('66666666-6666-6666-6666-666666666666', 'Ownership', 'Takes responsibility for outcomes end-to-end', 3),
-  ('66666666-6666-6666-6666-666666666666', 'Mentoring', 'Grows the skills of people around them', 2);
+-- Explicit ids so the assessment/score seed rows below can reference them directly.
+insert into public.competencies (id, competency_model_id, name, description, expected_proficiency_level) values
+  ('77777777-7777-7777-7777-777777777771', '66666666-6666-6666-6666-666666666666', 'Communication', 'Clearly conveys ideas and listens actively', 3),
+  ('77777777-7777-7777-7777-777777777772', '66666666-6666-6666-6666-666666666666', 'Problem Solving', 'Breaks down and resolves complex problems', 4),
+  ('77777777-7777-7777-7777-777777777773', '66666666-6666-6666-6666-666666666666', 'Technical Craft', 'Depth and quality of technical execution', 4),
+  ('77777777-7777-7777-7777-777777777774', '66666666-6666-6666-6666-666666666666', 'Collaboration', 'Works effectively across teams', 3),
+  ('77777777-7777-7777-7777-777777777775', '66666666-6666-6666-6666-666666666666', 'Ownership', 'Takes responsibility for outcomes end-to-end', 3),
+  ('77777777-7777-7777-7777-777777777776', '66666666-6666-6666-6666-666666666666', 'Mentoring', 'Grows the skills of people around them', 2);
+
+-- S-01 pilot assessments: Alice is mid-draft (2 of 6 scored), Bob has already
+-- submitted a complete one — exercises all three /assessment page states
+-- (none for the two leaders/admin who never self-assess in this pilot, draft
+-- for Alice, submitted/locked for Bob) without requiring manual setup.
+insert into public.assessments (id, employee_id, competency_model_id, status, submitted_at) values
+  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1', '44444444-4444-4444-4444-444444444444', '66666666-6666-6666-6666-666666666666', 'draft', null),
+  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa2', '55555555-5555-5555-5555-555555555555', '66666666-6666-6666-6666-666666666666', 'submitted', now());
+
+insert into public.assessment_scores (assessment_id, competency_id, score, comment) values
+  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1', '77777777-7777-7777-7777-777777777771', 3, null),
+  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1', '77777777-7777-7777-7777-777777777772', 3, null),
+  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa2', '77777777-7777-7777-7777-777777777771', 3, 'Comfortable presenting to the team'),
+  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa2', '77777777-7777-7777-7777-777777777772', 4, null),
+  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa2', '77777777-7777-7777-7777-777777777773', 3, null),
+  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa2', '77777777-7777-7777-7777-777777777774', 4, null),
+  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa2', '77777777-7777-7777-7777-777777777775', 3, null),
+  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa2', '77777777-7777-7777-7777-777777777776', 2, 'Still building confidence here');

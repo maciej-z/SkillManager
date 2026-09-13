@@ -260,14 +260,14 @@ Additive migration on top of F-01's schema; no existing assessment data to migra
 
 #### Automated
 
-- [ ] 1.1 `npx supabase db reset` applies migration and seed with exit code 0
-- [ ] 1.2 `npm run lint` passes
-- [ ] 1.3 `npx astro check` passes (0 errors)
+- [x] 1.1 `npx supabase db reset` applies migration and seed with exit code 0
+- [x] 1.2 `npm run lint` passes
+- [x] 1.3 `npx astro check` passes (0 errors)
 
 #### Manual
 
-- [ ] 1.4 Supabase Studio: Alice's assessment shows 2/6 scored + draft, Bob's shows 6/6 scored + submitted
-- [ ] 1.5 Bob's submitted assessment rejects further writes at the RLS layer
+- [x] 1.4 Supabase Studio: Alice's assessment shows 2/6 scored + draft, Bob's shows 6/6 scored + submitted
+- [x] 1.5 Bob's submitted assessment rejects further writes at the RLS layer
 
 ### Phase 2: Shared types and API routes
 
