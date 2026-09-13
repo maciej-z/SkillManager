@@ -277,14 +277,14 @@ Two additive migrations on top of S-01's schema; no existing assessment data nee
 
 #### Automated
 
-- [x] 3.1 `npm run lint` passes
-- [x] 3.2 `npx astro check` passes (0 errors)
-- [x] 3.3 `npm run build` passes
+- [x] 3.1 `npm run lint` passes — 9a2ff95
+- [x] 3.2 `npx astro check` passes (0 errors) — 9a2ff95
+- [x] 3.3 `npm run build` passes — 9a2ff95
 
 #### Manual
 
-- [x] 3.4 Junior Leader's /reviews shows only Bob's submitted assessment
-- [x] 3.5 Approving via the UI shows the locked read-only view afterward
-- [x] 3.6 Returning via the UI puts the assessment back in the employee's draft flow with leader comments visible
-- [x] 3.7 Senior Leader's /reviews shows the empty "no reports awaiting review" state
-- [x] 3.8 An employee with no direct reports also sees the empty state, not an error
+- [x] 3.4 Junior Leader's /reviews shows only Bob's submitted assessment — 9a2ff95
+- [x] 3.5 Approving via the UI shows the locked read-only view afterward — 9a2ff95
+- [x] 3.6 Returning via the UI puts the assessment back in the employee's draft flow with leader comments visible — 9a2ff95
+- [x] 3.7 Senior Leader's /reviews shows the empty "no reports awaiting review" state — 9a2ff95
+- [x] 3.8 An employee with no direct reports also sees the empty state, not an error — 9a2ff95
