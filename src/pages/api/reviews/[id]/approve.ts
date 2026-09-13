@@ -68,13 +68,21 @@ export const PATCH: APIRoute = async (context) => {
   // body — since RLS authorizes the whole assessment_scores row, not just
   // this column (see plan's Critical Implementation Details).
   for (const entry of parsed.data.competency_comments) {
-    const { error } = await supabase
+    const { data: updatedScore, error } = await supabase
       .from("assessment_scores")
       .update({ leader_comment: entry.leader_comment })
       .eq("assessment_id", assessmentId)
-      .eq("competency_id", entry.competency_id);
+      .eq("competency_id", entry.competency_id)
+      .select("competency_id")
+      .maybeSingle<{ competency_id: string }>();
     if (error) {
       return new Response(JSON.stringify({ error: error.message }), { status: 400 });
+    }
+    if (!updatedScore) {
+      return new Response(
+        JSON.stringify({ error: `No score found for competency ${entry.competency_id} on this assessment` }),
+        { status: 409 },
+      );
     }
   }
 

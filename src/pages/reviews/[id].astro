@@ -106,5 +106,14 @@ const scoresByCompetencyId = new Map(scores.map((s) => [s.competency_id, s]));
         </div>
       )
     }
+
+    {
+      assessment?.status === "draft" && (
+        <div class="flex flex-col gap-4">
+          <p class="text-muted-foreground text-sm">Returned to the employee for correction — awaiting resubmission.</p>
+          {assessment.leader_comment && <p class="text-sm">Your overall comment: {assessment.leader_comment}</p>}
+        </div>
+      )
+    }
   </div>
 </Layout>

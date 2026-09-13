@@ -1,7 +1,7 @@
 ---
 change_id: leader-review-and-approval
 title: Leader review and approval
-status: implemented
+status: impl_reviewed
 created: 2026-09-13
 updated: 2026-09-14
 archived_at: null

@@ -17,8 +17,9 @@ let loadError: string | null = null;
 if (supabase && user) {
   const { data, error } = await supabase
     .from("assessments")
-    .select("*, employee:profiles!assessments_employee_id_fkey(*)")
+    .select("*, employee:profiles!assessments_employee_id_fkey!inner(*)")
     .eq("status", "submitted")
+    .eq("employee.manager_id", user.id)
     .overrideTypes<(Assessment & { employee: Profile })[], { merge: false }>();
   if (error) {
     loadError = error.message;
