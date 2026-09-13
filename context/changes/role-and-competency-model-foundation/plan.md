@@ -277,27 +277,27 @@ This is the first migration in the project; no existing data to migrate. `supaba
 
 #### Automated
 
-- [x] 1.1 `npx supabase db reset` applies migration and seed with exit code 0
-- [x] 1.2 `npm run lint` passes
-- [x] 1.3 Row-count check confirms expected seed data
+- [x] 1.1 `npx supabase db reset` applies migration and seed with exit code 0 — ba0d2da
+- [x] 1.2 `npm run lint` passes — ba0d2da
+- [x] 1.3 Row-count check confirms expected seed data — ba0d2da
 
 #### Manual
 
-- [x] 1.4 Supabase Studio: manager_id chains resolve, exactly one active competency_model
-- [x] 1.5 Sign in as seeded employee/leader, confirm profile visibility scoping
-- [x] 1.6 New signup via `/auth/signup` succeeds and creates a profiles row
+- [x] 1.4 Supabase Studio: manager_id chains resolve, exactly one active competency_model — ba0d2da
+- [x] 1.5 Sign in as seeded employee/leader, confirm profile visibility scoping — ba0d2da
+- [x] 1.6 New signup via `/auth/signup` succeeds and creates a profiles row — ba0d2da
 
 ### Phase 2: Shared types and middleware role exposure
 
 #### Automated
 
-- [ ] 2.1 `npx astro sync && npm run build` passes
-- [ ] 2.2 `npm run lint` passes
+- [x] 2.1 `npx astro sync && npm run build` passes
+- [x] 2.2 `npm run lint` passes
 
 #### Manual
 
-- [ ] 2.3 Non-admin redirected from `/admin` to `/dashboard`
-- [ ] 2.4 Admin can access `/admin`
+- [x] 2.3 Non-admin redirected from `/admin` to `/dashboard`
+- [x] 2.4 Admin can access `/admin`
 
 ### Phase 3: Admin API routes
 
