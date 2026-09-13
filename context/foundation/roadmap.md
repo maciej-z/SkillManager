@@ -3,7 +3,7 @@ project: "SkillManager"
 version: 1
 status: draft
 created: 2026-09-13
-updated: 2026-09-13
+updated: 2026-09-14
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -43,7 +43,7 @@ Employees and their Competence Leaders currently have no structured way to asses
 | F-01 | role-and-competency-model-foundation | (foundation) roles, leader→report links, and the competency model are in place | —              | FR-001, FR-002, Access Control                    | done |
 | S-01 | employee-self-assessment             | view the competency model and complete + submit a self-assessment            | F-01           | FR-001, FR-002, FR-003, FR-004, FR-005, FR-006, FR-007 | in-progress |
 | S-02 | leader-review-and-approval           | (as leader) review a report's submitted assessment and approve or return it  | S-01, F-01     | FR-008, FR-009, FR-010, FR-011, FR-012            | in-progress |
-| S-03 | ai-development-plan                  | see the AI-generated development plan built from approved gaps               | S-02           | FR-013, FR-014, FR-015, FR-016, FR-017, US-01      | proposed |
+| S-03 | ai-development-plan                  | see the AI-generated development plan built from approved gaps               | S-02           | FR-013, FR-014, FR-015, FR-016, FR-017, US-01      | planning |
 
 ## Baseline
 
@@ -108,7 +108,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** This is the north star: the PoC's Secondary Success Criterion (leaders find the plan genuinely useful, not generic) rides entirely on this slice. Sequenced last since F-01 → S-01 → S-02 all exist purely to produce the approved-gap data this slice consumes.
-- **Status:** proposed
+- **Status:** planning
 
 ## Backlog Handoff
 
