@@ -291,25 +291,25 @@ This is the first migration in the project; no existing data to migrate. `supaba
 
 #### Automated
 
-- [x] 2.1 `npx astro sync && npm run build` passes
-- [x] 2.2 `npm run lint` passes
+- [x] 2.1 `npx astro sync && npm run build` passes — 2cec919
+- [x] 2.2 `npm run lint` passes — 2cec919
 
 #### Manual
 
-- [x] 2.3 Non-admin redirected from `/admin` to `/dashboard`
-- [x] 2.4 Admin can access `/admin`
+- [x] 2.3 Non-admin redirected from `/admin` to `/dashboard` — 2cec919
+- [x] 2.4 Admin can access `/admin` — 2cec919
 
 ### Phase 3: Admin API routes
 
 #### Automated
 
-- [ ] 3.1 `npm run lint` passes
-- [ ] 3.2 `npm run build` passes
+- [x] 3.1 `npm run lint` passes
+- [x] 3.2 `npm run build` passes
 
 #### Manual
 
-- [ ] 3.3 Admin requests succeed with expected responses across all routes
-- [ ] 3.4 Non-admin requests are rejected (403/redirect) across all routes
+- [x] 3.3 Admin requests succeed with expected responses across all routes
+- [x] 3.4 Non-admin requests are rejected (403/redirect) across all routes
 
 ### Phase 4: Admin UI
 
