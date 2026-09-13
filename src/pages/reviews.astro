@@ -1,0 +1,53 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { createClient } from "@/lib/supabase";
+import type { Assessment, Profile } from "@/types";
+
+const { user } = Astro.locals;
+const supabase = createClient(Astro.request.headers, Astro.cookies);
+
+interface PendingRow {
+  assessment: Assessment;
+  employee: Profile;
+}
+
+let pending: PendingRow[] = [];
+let loadError: string | null = null;
+
+if (supabase && user) {
+  const { data, error } = await supabase
+    .from("assessments")
+    .select("*, employee:profiles!assessments_employee_id_fkey(*)")
+    .eq("status", "submitted")
+    .overrideTypes<(Assessment & { employee: Profile })[], { merge: false }>();
+  if (error) {
+    loadError = error.message;
+  }
+  pending = (data ?? []).map((row) => ({ assessment: row, employee: row.employee }));
+}
+---
+
+<Layout title="Review Queue">
+  <div class="mx-auto max-w-3xl p-8">
+    <a href="/dashboard" class="text-sm text-blue-600 hover:underline">&larr; Dashboard</a>
+    <h1 class="my-4 text-2xl font-bold">Review Queue</h1>
+    {loadError && <p class="mb-4 text-sm text-red-600">Failed to load review queue: {loadError}</p>}
+
+    {pending.length === 0 && !loadError && <p class="text-muted-foreground">No reports awaiting review.</p>}
+
+    {
+      pending.length > 0 && (
+        <ul class="flex flex-col gap-3">
+          {pending.map(({ assessment, employee }) => (
+            <li class="rounded-lg border p-4">
+              <a href={`/reviews/${assessment.id}`} class="font-medium text-blue-600 hover:underline">
+                {employee.full_name ?? employee.id}
+              </a>
+              <span class="text-muted-foreground ml-2 text-sm">submitted {assessment.submitted_at}</span>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </div>
+</Layout>

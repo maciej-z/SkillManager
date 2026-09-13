@@ -263,28 +263,28 @@ Two additive migrations on top of S-01's schema; no existing assessment data nee
 
 #### Automated
 
-- [x] 2.1 `npm run lint` passes
-- [x] 2.2 `npx astro check` passes (0 errors)
-- [x] 2.3 `npm run build` passes
+- [x] 2.1 `npm run lint` passes — b7aad8c
+- [x] 2.2 `npx astro check` passes (0 errors) — b7aad8c
+- [x] 2.3 `npm run build` passes — b7aad8c
 
 #### Manual
 
-- [x] 2.4 Junior Leader approves Bob's assessment; status becomes approved, comments persist, repeat attempt rejected (409)
-- [x] 2.5 Junior Leader returns a submitted assessment; status becomes draft, comments visible, employee can resume editing
-- [x] 2.6 A non-manager's approve/return attempt on Bob's assessment is rejected (404 — RLS hides the row entirely)
+- [x] 2.4 Junior Leader approves Bob's assessment; status becomes approved, comments persist, repeat attempt rejected (409) — b7aad8c
+- [x] 2.5 Junior Leader returns a submitted assessment; status becomes draft, comments visible, employee can resume editing — b7aad8c
+- [x] 2.6 A non-manager's approve/return attempt on Bob's assessment is rejected (404 — RLS hides the row entirely) — b7aad8c
 
 ### Phase 3: Leader UI
 
 #### Automated
 
-- [ ] 3.1 `npm run lint` passes
-- [ ] 3.2 `npx astro check` passes (0 errors)
-- [ ] 3.3 `npm run build` passes
+- [x] 3.1 `npm run lint` passes
+- [x] 3.2 `npx astro check` passes (0 errors)
+- [x] 3.3 `npm run build` passes
 
 #### Manual
 
-- [ ] 3.4 Junior Leader's /reviews shows only Bob's submitted assessment
-- [ ] 3.5 Approving via the UI shows the locked read-only view afterward
-- [ ] 3.6 Returning via the UI puts the assessment back in the employee's draft flow with leader comments visible
-- [ ] 3.7 Senior Leader's /reviews shows the empty "no reports awaiting review" state
-- [ ] 3.8 An employee with no direct reports also sees the empty state, not an error
+- [x] 3.4 Junior Leader's /reviews shows only Bob's submitted assessment
+- [x] 3.5 Approving via the UI shows the locked read-only view afterward
+- [x] 3.6 Returning via the UI puts the assessment back in the employee's draft flow with leader comments visible
+- [x] 3.7 Senior Leader's /reviews shows the empty "no reports awaiting review" state
+- [x] 3.8 An employee with no direct reports also sees the empty state, not an error

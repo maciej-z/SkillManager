@@ -1,0 +1,110 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { createClient } from "@/lib/supabase";
+import ReviewForm from "@/components/reviews/ReviewForm";
+import type { Assessment, AssessmentScore, Competency, Profile } from "@/types";
+
+const { user } = Astro.locals;
+const { id } = Astro.params;
+const supabase = createClient(Astro.request.headers, Astro.cookies);
+
+let assessment: Assessment | null = null;
+let employee: Profile | null = null;
+let competencies: Competency[] = [];
+let scores: AssessmentScore[] = [];
+let loadError: string | null = null;
+
+if (supabase && user && id) {
+  const { data: assessmentData, error: assessmentError } = await supabase
+    .from("assessments")
+    .select("*")
+    .eq("id", id)
+    .maybeSingle<Assessment>();
+  if (assessmentError) {
+    loadError = assessmentError.message;
+  }
+  assessment = assessmentData;
+
+  if (assessment) {
+    const { data: employeeData, error: employeeError } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", assessment.employee_id)
+      .maybeSingle<Profile>();
+    if (employeeError) {
+      loadError = loadError ?? employeeError.message;
+    }
+    employee = employeeData;
+
+    const { data: competencyData, error: competencyError } = await supabase
+      .from("competencies")
+      .select("*")
+      .eq("competency_model_id", assessment.competency_model_id)
+      .order("name")
+      .overrideTypes<Competency[], { merge: false }>();
+    if (competencyError) {
+      loadError = loadError ?? competencyError.message;
+    }
+    competencies = competencyData ?? [];
+
+    const { data: scoreData, error: scoreError } = await supabase
+      .from("assessment_scores")
+      .select("*")
+      .eq("assessment_id", assessment.id)
+      .overrideTypes<AssessmentScore[], { merge: false }>();
+    if (scoreError) {
+      loadError = loadError ?? scoreError.message;
+    }
+    scores = scoreData ?? [];
+  }
+}
+
+const scoresByCompetencyId = new Map(scores.map((s) => [s.competency_id, s]));
+---
+
+<Layout title="Review Assessment">
+  <div class="mx-auto max-w-3xl p-8">
+    <a href="/reviews" class="text-sm text-blue-600 hover:underline">&larr; Review Queue</a>
+    <h1 class="my-4 text-2xl font-bold">Review Assessment</h1>
+    {loadError && <p class="mb-4 text-sm text-red-600">Failed to load assessment: {loadError}</p>}
+
+    {
+      !assessment && !loadError && (
+        <p class="text-muted-foreground">
+          This assessment doesn't exist, or isn't one of your direct reports' submissions.
+        </p>
+      )
+    }
+
+    {assessment && <p class="text-muted-foreground mb-4 text-sm">{employee?.full_name ?? employee?.id}</p>}
+
+    {
+      assessment?.status === "submitted" && (
+        <ReviewForm assessmentId={assessment.id} competencies={competencies} scores={scores} client:load />
+      )
+    }
+
+    {
+      assessment?.status === "approved" && (
+        <div class="flex flex-col gap-4">
+          <p class="text-muted-foreground text-sm">
+            Approved {assessment.reviewed_at && new Date(assessment.reviewed_at).toLocaleString()} — this assessment is
+            locked.
+          </p>
+          {assessment.leader_comment && <p class="text-sm">Overall comment: {assessment.leader_comment}</p>}
+          {competencies.map((competency) => (
+            <div class="rounded-lg border p-4">
+              <div class="mb-1 font-medium">{competency.name}</div>
+              <div class="text-sm">Employee score: {scoresByCompetencyId.get(competency.id)?.score ?? "—"}</div>
+              {scoresByCompetencyId.get(competency.id)?.leader_comment && (
+                <p class="text-muted-foreground mt-1 text-sm">
+                  {scoresByCompetencyId.get(competency.id)?.leader_comment}
+                </p>
+              )}
+            </div>
+          ))}
+        </div>
+      )
+    }
+  </div>
+</Layout>
