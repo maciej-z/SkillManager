@@ -315,11 +315,11 @@ This is the first migration in the project; no existing data to migrate. `supaba
 
 #### Automated
 
-- [x] 4.1 `npm run lint` passes
-- [x] 4.2 `npm run build` passes
+- [x] 4.1 `npm run lint` passes — 7e1331d
+- [x] 4.2 `npm run build` passes — 7e1331d
 
 #### Manual
 
-- [x] 4.3 Admin reassigns a profile's manager via UI, change persists
-- [x] 4.4 Admin creates/activates a competency model version and manages its competencies via UI
-- [x] 4.5 Non-admin cannot reach `/admin/*` pages
+- [x] 4.3 Admin reassigns a profile's manager via UI, change persists — 7e1331d
+- [x] 4.4 Admin creates/activates a competency model version and manages its competencies via UI — 7e1331d
+- [x] 4.5 Non-admin cannot reach `/admin/*` pages — 7e1331d
