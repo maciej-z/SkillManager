@@ -26,7 +26,7 @@ export interface Competency {
   created_at: string;
 }
 
-export type AssessmentStatus = "draft" | "submitted";
+export type AssessmentStatus = "draft" | "submitted" | "approved";
 
 export interface Assessment {
   id: string;
@@ -36,6 +36,9 @@ export interface Assessment {
   submitted_at: string | null;
   created_at: string;
   updated_at: string;
+  leader_comment: string | null;
+  reviewed_by: string | null;
+  reviewed_at: string | null;
 }
 
 export interface AssessmentScore {
@@ -46,4 +49,5 @@ export interface AssessmentScore {
   comment: string | null;
   created_at: string;
   updated_at: string;
+  leader_comment: string | null;
 }

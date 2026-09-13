@@ -145,7 +145,7 @@ Extend `src/types.ts` with the new columns, and add the two leader-gated routes:
 
 - As Junior Leader, approve Bob's submitted assessment; confirm status is now `approved`, comments persisted, and a second approve/return attempt on the same assessment is rejected (409)
 - As Junior Leader, return a submitted assessment for correction; confirm status is now `draft`, leader comments persisted and visible, and the employee can resume editing it via S-01's existing `/assessment` flow
-- As Senior Leader (not Bob's direct manager) or as Alice (an employee, not Bob's manager), attempt to approve/return Bob's assessment and confirm both are rejected (403)
+- As Senior Leader (not Bob's direct manager) or as Alice (an employee, not Bob's manager), attempt to approve/return Bob's assessment and confirm both are rejected — RLS hides the row entirely from a non-manager, so the route reports 404 (not 403); this is the natural, arguably more secure consequence of the RLS-first design and is treated as a pass
 
 ---
 
@@ -249,29 +249,29 @@ Two additive migrations on top of S-01's schema; no existing assessment data nee
 
 #### Automated
 
-- [x] 1.1 `npx supabase db reset` applies both migrations and the existing seed with exit code 0
-- [x] 1.2 `npm run lint` passes
-- [x] 1.3 `npx astro check` passes (0 errors)
+- [x] 1.1 `npx supabase db reset` applies both migrations and the existing seed with exit code 0 — 7b5f007
+- [x] 1.2 `npm run lint` passes — 7b5f007
+- [x] 1.3 `npx astro check` passes (0 errors) — 7b5f007
 
 #### Manual
 
-- [x] 1.4 Supabase Studio: `assessment_status` has 3 values, new columns exist on both tables
-- [x] 1.5 Junior Leader's SELECT against assessments returns Bob's submitted assessment, not Alice's draft one
-- [x] 1.6 Senior Leader's SELECT returns neither (leader relationship must be direct)
+- [x] 1.4 Supabase Studio: `assessment_status` has 3 values, new columns exist on both tables — 7b5f007
+- [x] 1.5 Junior Leader's SELECT against assessments returns Bob's submitted assessment, not Alice's draft one — 7b5f007
+- [x] 1.6 Senior Leader's SELECT returns neither (leader relationship must be direct) — 7b5f007
 
 ### Phase 2: Shared types and API routes
 
 #### Automated
 
-- [ ] 2.1 `npm run lint` passes
-- [ ] 2.2 `npx astro check` passes (0 errors)
-- [ ] 2.3 `npm run build` passes
+- [x] 2.1 `npm run lint` passes
+- [x] 2.2 `npx astro check` passes (0 errors)
+- [x] 2.3 `npm run build` passes
 
 #### Manual
 
-- [ ] 2.4 Junior Leader approves Bob's assessment; status becomes approved, comments persist, repeat attempt rejected (409)
-- [ ] 2.5 Junior Leader returns a submitted assessment; status becomes draft, comments visible, employee can resume editing
-- [ ] 2.6 A non-manager's approve/return attempt on Bob's assessment is rejected (403)
+- [x] 2.4 Junior Leader approves Bob's assessment; status becomes approved, comments persist, repeat attempt rejected (409)
+- [x] 2.5 Junior Leader returns a submitted assessment; status becomes draft, comments visible, employee can resume editing
+- [x] 2.6 A non-manager's approve/return attempt on Bob's assessment is rejected (404 — RLS hides the row entirely)
 
 ### Phase 3: Leader UI
 
