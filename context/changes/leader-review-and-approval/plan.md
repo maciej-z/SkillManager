@@ -249,15 +249,15 @@ Two additive migrations on top of S-01's schema; no existing assessment data nee
 
 #### Automated
 
-- [ ] 1.1 `npx supabase db reset` applies both migrations and the existing seed with exit code 0
-- [ ] 1.2 `npm run lint` passes
-- [ ] 1.3 `npx astro check` passes (0 errors)
+- [x] 1.1 `npx supabase db reset` applies both migrations and the existing seed with exit code 0
+- [x] 1.2 `npm run lint` passes
+- [x] 1.3 `npx astro check` passes (0 errors)
 
 #### Manual
 
-- [ ] 1.4 Supabase Studio: `assessment_status` has 3 values, new columns exist on both tables
-- [ ] 1.5 Junior Leader's SELECT against assessments returns Bob's submitted assessment, not Alice's draft one
-- [ ] 1.6 Senior Leader's SELECT returns neither (leader relationship must be direct)
+- [x] 1.4 Supabase Studio: `assessment_status` has 3 values, new columns exist on both tables
+- [x] 1.5 Junior Leader's SELECT against assessments returns Bob's submitted assessment, not Alice's draft one
+- [x] 1.6 Senior Leader's SELECT returns neither (leader relationship must be direct)
 
 ### Phase 2: Shared types and API routes
 
