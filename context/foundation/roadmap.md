@@ -40,7 +40,7 @@ Employees and their Competence Leaders currently have no structured way to asses
 
 | ID   | Change ID                          | Outcome (user can …)                                                        | Prerequisites | PRD refs                                        | Status   |
 | ---- | ----------------------------------- | ---------------------------------------------------------------------------- | -------------- | ------------------------------------------------ | -------- |
-| F-01 | role-and-competency-model-foundation | (foundation) roles, leader→report links, and the competency model are in place | —              | FR-001, FR-002, Access Control                    | in-progress |
+| F-01 | role-and-competency-model-foundation | (foundation) roles, leader→report links, and the competency model are in place | —              | FR-001, FR-002, Access Control                    | done |
 | S-01 | employee-self-assessment             | view the competency model and complete + submit a self-assessment            | F-01           | FR-001, FR-002, FR-003, FR-004, FR-005, FR-006, FR-007 | proposed |
 | S-02 | leader-review-and-approval           | (as leader) review a report's submitted assessment and approve or return it  | S-01, F-01     | FR-008, FR-009, FR-010, FR-011, FR-012            | proposed |
 | S-03 | ai-development-plan                  | see the AI-generated development plan built from approved gaps               | S-02           | FR-013, FR-014, FR-015, FR-016, FR-017, US-01      | proposed |
@@ -70,7 +70,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Sequenced first because every downstream slice needs to know who's an Employee vs. a Competence Leader and which competency model applies to them; skipping this would force S-01 to invent throwaway role logic that S-02 would then have to rework.
-- **Status:** in-progress
+- **Status:** done
 
 ## Slices
 
@@ -137,4 +137,4 @@ Foundations below assume these are present and do NOT re-scaffold them.
 
 ## Done
 
-(none yet)
+- **F-01: (foundation) user accounts carry an Employee/Competence Leader role plus a leader→report assignment; the competency model (competencies with name, description, and expected proficiency level) is defined and seeded for the pilot group.** — Archived 2026-09-13 → `context/archive/2026-09-13-role-and-competency-model-foundation/`. Lesson: —.
