@@ -258,13 +258,13 @@ whole chain works before anything else is built on it.
 
 #### Automated Verification:
 
-- [ ] `npx supabase start && npx supabase db reset` succeeds
-- [ ] `npm run test` runs and `tests/integration/smoke.test.ts` passes
-- [ ] `npm run lint` passes on the new test files
+- `npx supabase start && npx supabase db reset` succeeds
+- `npm run test` runs and `tests/integration/smoke.test.ts` passes
+- `npm run lint` passes on the new test files
 
 #### Manual Verification:
 
-- [ ] Run the above locally end-to-end once and confirm the smoke test's second assertion (Alice can't read Bob's row) actually fails if you temporarily comment out `assessments_select_own`'s scoping — proves the test would catch a real regression, not just a happy path
+- Run the above locally end-to-end once and confirm the smoke test's second assertion (Alice can't read Bob's row) actually fails if you temporarily comment out `assessments_select_own`'s scoping — proves the test would catch a real regression, not just a happy path
 
 ---
 
@@ -289,11 +289,11 @@ submitted, then returned for correction by a leader.
 
 #### Automated Verification:
 
-- [ ] `npx supabase db reset` applies cleanly with the new fixture
+- `npx supabase db reset` applies cleanly with the new fixture
 
 #### Manual Verification:
 
-- [ ] Supabase Studio: Chris's assessment shows `status = 'draft'`, `submitted_at` non-null, `reviewed_by`/`reviewed_at` set, and at least one score has a `leader_comment`
+- Supabase Studio: Chris's assessment shows `status = 'draft'`, `submitted_at` non-null, `reviewed_by`/`reviewed_at` set, and at least one score has a `leader_comment`
 
 ---
 
@@ -326,13 +326,13 @@ test that would have caught it before this phase.
 
 #### Automated Verification:
 
-- [ ] `npx supabase db reset` applies both new migrations cleanly (Phase 3 + eventually Phase 4)
-- [ ] `npm run test` passes, including the new self-approval-rejected assertion
-- [ ] Phase 1's smoke test still passes (no regression from the policy change)
+- `npx supabase db reset` applies both new migrations cleanly (Phase 3 + eventually Phase 4)
+- `npm run test` passes, including the new self-approval-rejected assertion
+- Phase 1's smoke test still passes (no regression from the policy change)
 
 #### Manual Verification:
 
-- [ ] Supabase Studio → Authentication/Database → Policies: confirm `assessments_update_own_draft_only`'s WITH CHECK now shows the `status = 'submitted'` clause
+- Supabase Studio → Authentication/Database → Policies: confirm `assessments_update_own_draft_only`'s WITH CHECK now shows the `status = 'submitted'` clause
 
 ---
 
@@ -375,13 +375,13 @@ Implementation Details.
 
 #### Automated Verification:
 
-- [ ] `npx supabase db reset` applies cleanly (both Phase 3 and Phase 4 migrations)
-- [ ] `npm run test` passes, including the plan-select-rejects-non-approved assertion
-- [ ] Prior phases' tests still pass
+- `npx supabase db reset` applies cleanly (both Phase 3 and Phase 4 migrations)
+- `npm run test` passes, including the plan-select-rejects-non-approved assertion
+- Prior phases' tests still pass
 
 #### Manual Verification:
 
-- [ ] Supabase Studio → Policies: confirm both `development_plans_select` and `development_plan_gaps_select` now show the `status = 'approved'` clause
+- Supabase Studio → Policies: confirm both `development_plans_select` and `development_plan_gaps_select` now show the `status = 'approved'` clause
 
 ---
 
@@ -430,13 +430,13 @@ route-handler regression tests for every status-transition endpoint and
 
 #### Automated Verification:
 
-- [ ] `npm run test` passes with all new assertions across the three test files
-- [ ] `npm run lint` passes
-- [ ] Full suite runtime stays reasonable for local iteration (no test performs unbounded polling/sleeps)
+- `npm run test` passes with all new assertions across the three test files
+- `npm run lint` passes
+- Full suite runtime stays reasonable for local iteration (no test performs unbounded polling/sleeps)
 
 #### Manual Verification:
 
-- [ ] Spot-check one RLS test and one route-handler test by temporarily reverting their corresponding fix/logic and confirming the test fails — proves the suite has real teeth, not just green checkmarks
+- Spot-check one RLS test and one route-handler test by temporarily reverting their corresponding fix/logic and confirming the test fails — proves the suite has real teeth, not just green checkmarks
 
 ---
 
@@ -469,13 +469,13 @@ with the patterns this phase established.
 
 #### Automated Verification:
 
-- [ ] CI workflow YAML is valid (`.github/workflows/ci.yml` parses)
-- [ ] A CI run (push or PR) completes the new test step successfully
+- CI workflow YAML is valid (`.github/workflows/ci.yml` parses)
+- A CI run (push or PR) completes the new test step successfully
 
 #### Manual Verification:
 
-- [ ] Open the Actions run and confirm the test step's output shows the full suite passing, not skipped
-- [ ] Read back `test-plan.md` §6.2 and §6.6 and confirm they read as genuinely useful instructions for someone adding the next test, not a restatement of this plan
+- Open the Actions run and confirm the test step's output shows the full suite passing, not skipped
+- Read back `test-plan.md` §6.2 and §6.6 and confirm they read as genuinely useful instructions for someone adding the next test, not a restatement of this plan
 
 ---
 
@@ -584,10 +584,10 @@ needed for existing local data.
 
 #### Automated
 
-- [x] 6.1 `.github/workflows/ci.yml` is valid
-- [x] 6.2 A CI run completes the new test step successfully
+- [x] 6.1 `.github/workflows/ci.yml` is valid — b8fb591
+- [x] 6.2 A CI run completes the new test step successfully — b8fb591
 
 #### Manual
 
-- [x] 6.3 Actions run shows the full suite passing, not skipped
-- [x] 6.4 test-plan.md §6.2/§6.6 read as genuinely useful
+- [x] 6.3 Actions run shows the full suite passing, not skipped — b8fb591
+- [x] 6.4 test-plan.md §6.2/§6.6 read as genuinely useful — b8fb591
