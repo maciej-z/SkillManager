@@ -6,122 +6,100 @@ created: 2026-09-13
 updated: 2026-09-14
 prd_version: 1
 main_goal: speed
-top_blocker: time
-milestone_id: first-ai-development-plan
-milestone_seq: 1
+top_blocker: none
+milestone_id: role-based-landing-pages
+milestone_seq: 2
 milestone_status: open
 ---
 
 # Roadmap: SkillManager
 
-> Derived from context/foundation/prd.md (v1) + auto-researched codebase baseline.
+> Derived from context/foundation/prd.md (v1) + a user-described milestone charter + auto-researched codebase baseline.
 > Edit-in-place; archive when superseded.
 > Slices below are listed in dependency order. The "At a glance" table is the index.
 
 ## Milestone
 
-**M-1: First AI development plan** — Status: open
+**M-2: Role-based landing pages & team gap visibility** — Status: open
 
-- **Intent:** Prove the full assessment-to-plan pipeline works end-to-end for one employee/leader pair — self-assessment, leader approval, gap identification, and a genuinely useful AI-generated development plan.
-- **Source materials:** `context/foundation/prd.md` (v1)
+- **Intent:** Give each role a landing experience suited to what they actually do first — a Competence Leader opens to a read-only ranked view of their team's most common competency gaps (extending the PoC's leader-usefulness bet from a single assessment to the team level), while an Employee is sent straight into their own assessment instead of a generic dashboard.
+- **Source materials:** user description (anchors below). Traces conceptually to `context/foundation/prd.md`'s Access Control matrix row *"View team-level competency gaps/coverage"* (Competence Leader only), which M-1 left as an unresolved Open Roadmap Question since no Functional Requirement specified it.
 - **Done when:** every F-NN and S-NN below is `done`.
+- **Scope anchors:**
+  - MS-01: A Competence Leader's post-login landing page is a read-only view ranking the most common competency gaps across their direct reports; from it, the leader can navigate to the review queue (`/reviews`).
+  - MS-02: An Employee is redirected straight to the assessment page immediately after login, instead of landing on the generic dashboard.
 
 ## Vision recap
 
-Employees and their Competence Leaders currently have no structured way to assess skills, spot the competency gaps that matter, and turn them into a real development plan — it happens today via spreadsheets, informal chats, or not at all. This PoC replaces that with a structured self-assessment that a leader reviews and approves, followed by an AI-generated, personalized multi-month development plan built from the employee's actual approved gaps — data trustworthy enough for real staffing and development decisions, not a generic training catalog.
+Employees and their Competence Leaders currently have no structured way to assess skills, spot the competency gaps that matter, and turn them into a real development plan. M-1 shipped the full per-employee pipeline (self-assessment → leader approval → AI-generated plan). M-2 is the natural next step the PRD's own Access Control matrix implied but didn't specify: give the Competence Leader a team-level view of where gaps cluster, and get the Employee straight to the task they came to do.
 
 ## North star
 
-**S-03: Employee (and leader) receive the AI-generated development plan** — this is the slice that actually tests the PoC's core bet: that leader-approved, gap-specific AI plans are more useful than a generic catalog. Everything before it only matters if this works.
+**S-04: Competence Leader sees the team's most common competency gaps** — this is the slice that extends the PoC's core leader-usefulness bet (Secondary Success Criterion in the PRD) from "one approved assessment" to "my whole team, at a glance." It's the first thing a leader would look for once several reports have been assessed.
 
-> "North star" here means the smallest end-to-end slice that, if it works, proves the product's core idea — sequenced as early as its prerequisites allow, because the rest of the roadmap only pays off if this one does.
+> "North star" here means the smallest end-to-end slice that, if it works, proves this milestone's core idea — sequenced as early as its prerequisites allow, because the rest of the milestone only pays off if this one does.
 
 ## At a glance
 
-| ID   | Change ID                          | Outcome (user can …)                                                        | Prerequisites | PRD refs                                        | Status   |
-| ---- | ----------------------------------- | ---------------------------------------------------------------------------- | -------------- | ------------------------------------------------ | -------- |
-| F-01 | role-and-competency-model-foundation | (foundation) roles, leader→report links, and the competency model are in place | —              | FR-001, FR-002, Access Control                    | done |
-| S-01 | employee-self-assessment             | view the competency model and complete + submit a self-assessment            | F-01           | FR-001, FR-002, FR-003, FR-004, FR-005, FR-006, FR-007 | done |
-| S-02 | leader-review-and-approval           | (as leader) review a report's submitted assessment and approve or return it  | S-01, F-01     | FR-008, FR-009, FR-010, FR-011, FR-012            | done |
-| S-03 | ai-development-plan                  | see the AI-generated development plan built from approved gaps               | S-02           | FR-013, FR-014, FR-015, FR-016, FR-017, US-01      | done |
+| ID   | Change ID                    | Outcome (user can …)                                                              | Prerequisites | PRD refs | Status |
+| ---- | ----------------------------- | ---------------------------------------------------------------------------------- | -------------- | -------- | ------ |
+| S-04 | leader-team-gap-view           | (as leader) see, immediately after login, a ranked view of the team's most common competency gaps, with a link into the review queue | —              | MS-01    | ready  |
+| S-05 | employee-post-login-redirect   | (as employee) land directly on the assessment page after logging in                | —              | MS-02    | ready  |
 
 ## Baseline
 
-What's already in place in the codebase as of `2026-09-13` (auto-researched + user-confirmed).
-Foundations below assume these are present and do NOT re-scaffold them.
+What's already in place in the codebase as of `2026-09-14` (carried forward from M-1's implementation; re-confirmed by direct inspection, not re-probed since no layer changed shape).
 
-- **Frontend:** present — Astro 6 + React 19 islands, Tailwind 4, shadcn/ui "new-york" components scaffolded (`src/layouts/Layout.astro`, `src/components/ui/button.tsx`). No domain UI yet.
-- **Backend / API:** partial — Astro SSR API routes exist only for auth (`src/pages/api/auth/{signin,signup,signout}.ts`). No competency/assessment/review/plan endpoints yet.
-- **Data:** absent — Supabase client wired (`src/lib/supabase.ts`) and CLI present (`supabase/config.toml`), but no migrations exist — no competency-model, assessment, or plan schema.
-- **Auth:** present but role-less — full sign-in/up/out + session middleware gating `/dashboard` (`src/middleware.ts`), but no Employee/Competence Leader role field and no leader→report relationship data yet.
-- **Deploy / infra:** present — Cloudflare adapter + wrangler configured, GitHub Actions CI (`.github/workflows/ci.yml`) runs lint+build, already deployed once per git history.
-- **Observability:** absent — no logging/error-tracking/metrics libraries found.
+- **Frontend:** present — Astro 6 + React 19 islands, Tailwind 4, shadcn/ui "new-york" components; full employee/leader domain UI now exists (self-assessment, review/approval, development-plan views).
+- **Backend / API:** present — Astro SSR API routes for auth, admin (competencies/models), assessments, reviews, and AI plan generation.
+- **Data:** present — full Postgres schema (`profiles`, `competency_models`, `competencies`, `assessments`, `assessment_scores`, `development_plans`, `development_plan_gaps`), RLS enabled on every table, employee-or-manager visibility already proven across S-01–S-03.
+- **Auth:** present — full role-based auth (Employee / Competence Leader / Admin) with leader→report relationships; `context.locals.user`/`profile` already available in `src/middleware.ts`. `src/pages/dashboard.astro` is currently a single generic "Welcome, {email}" page with no role branching — this is exactly the gap both M-2 slices close.
+- **Deploy / infra:** present — Cloudflare adapter + wrangler, GitHub Actions CI (lint + build).
+- **Observability:** absent — no logging/error-tracking/metrics libraries found (unchanged since M-1).
+
+No baseline layer is absent or partial in a way that blocks either slice — both build directly on data and auth that already exist. This milestone has no Foundations.
 
 ## Foundations
 
-### F-01: Role & competency-model foundation
-
-- **Outcome:** (foundation) user accounts carry an Employee/Competence Leader role plus a leader→report assignment; the competency model (competencies with name, description, and expected proficiency level) is defined and seeded for the pilot group.
-- **Change ID:** role-and-competency-model-foundation
-- **PRD refs:** FR-001, FR-002, Access Control section, Non-Functional Requirements (visibility guardrail)
-- **Unlocks:** S-01 (needs a role + an applicable competency model to view), S-02 (needs the leader→report relationship to know who a leader can review)
-- **Prerequisites:** —
-- **Parallel with:** —
-- **Blockers:** —
-- **Unknowns:** —
-- **Risk:** Sequenced first because every downstream slice needs to know who's an Employee vs. a Competence Leader and which competency model applies to them; skipping this would force S-01 to invent throwaway role logic that S-02 would then have to rework.
-- **Status:** done
+(None for M-2 — the Baseline above already covers everything both slices need: role data, approved-assessment data, and per-employee gap computation precedent from S-03. Neither slice's technical need justifies a cross-cutting enabler ahead of the vertical work itself.)
 
 ## Slices
 
-### S-01: Employee completes and submits a self-assessment
+### S-04: Competence Leader sees the team's most common competency gaps
 
-- **Outcome:** user can view the competency model applicable to them, score every competency (with an optional comment), save progress as a draft, and submit a completed assessment for review.
-- **Change ID:** employee-self-assessment
-- **PRD refs:** FR-001, FR-002, FR-003, FR-004, FR-005, FR-006, FR-007
-- **Prerequisites:** F-01
-- **Parallel with:** —
+- **Outcome:** user (Competence Leader) lands, immediately after login, on a read-only view ranking the most common competency gaps across their direct reports' approved assessments; from there they can navigate to the review queue (`/reviews`).
+- **Change ID:** leader-team-gap-view
+- **PRD refs:** MS-01
+- **Prerequisites:** —  (consumes existing `assessments`/`assessment_scores`/`competencies` data — and optionally `development_plan_gaps` from S-03 — all already in place)
+- **Parallel with:** S-05
+- **Blockers:** —
+- **Unknowns:**
+  - The exact aggregation method for "most common gaps" isn't specified (frequency count of reports with that gap vs. average/summed gap size vs. something else). — Owner: user. Block: no — a reasonable default (frequency count, ties broken by average gap size) can be proposed and confirmed at `/10x-plan` time without blocking sequencing.
+- **Risk:** This is the milestone's north star — the team-level extension of the PRD's "leaders find this useful" bet. Sequenced first (alongside S-05, since neither depends on the other) because it's the validation slice for this milestone.
+- **Status:** ready
+
+### S-05: Employee lands directly on the assessment page after login
+
+- **Outcome:** user (Employee) is redirected straight to `/assessment` immediately after signing in, instead of seeing the generic dashboard.
+- **Change ID:** employee-post-login-redirect
+- **PRD refs:** MS-02
+- **Prerequisites:** —
+- **Parallel with:** S-04
 - **Blockers:** —
 - **Unknowns:** —
-- **Risk:** Nothing downstream can happen until a real submitted assessment exists, so this has to land before review/approval logic. Scope is deliberately kept to "create, score, draft, submit one assessment" — no review logic here.
-- **Status:** done
-
-### S-02: Competence Leader reviews and approves an assessment
-
-- **Outcome:** user (Competence Leader) can see assessments submitted by their direct reports, review the scores, add their own comments, and approve the assessment or return it for correction.
-- **Change ID:** leader-review-and-approval
-- **PRD refs:** FR-008, FR-009, FR-010, FR-011, FR-012
-- **Prerequisites:** S-01, F-01
-- **Parallel with:** —
-- **Blockers:** —
-- **Unknowns:** —
-- **Risk:** Depends on a real submitted assessment (S-01) and the leader→report relationship (F-01). Approval is the guardrail the PRD calls non-bypassable — it has to land before any plan-generation logic can be trusted to consume "approved" data.
-- **Status:** done
-
-### S-03: Employee (and leader) receive the AI-generated development plan
-
-- **Outcome:** user (Employee) can view a personalized development plan — the system's identified competency gaps, ranked largest to smallest, with the top 3 each paired with concrete recommended actions — generated immediately after their Competence Leader approves the assessment; the Competence Leader can view the same plan for their report.
-- **Change ID:** ai-development-plan
-- **PRD refs:** FR-013, FR-014, FR-015, FR-016, FR-017, US-01
-- **Prerequisites:** S-02
-- **Parallel with:** —
-- **Blockers:** —
-- **Unknowns:** —
-- **Risk:** This is the north star: the PoC's Secondary Success Criterion (leaders find the plan genuinely useful, not generic) rides entirely on this slice. Sequenced last since F-01 → S-01 → S-02 all exist purely to produce the approved-gap data this slice consumes.
-- **Status:** done
+- **Risk:** Small, self-contained UX change with no data dependency; a good candidate to run in parallel with S-04 on a separate agent if capacity allows.
+- **Status:** ready
 
 ## Backlog Handoff
 
-| Roadmap ID | Change ID                          | Suggested issue title                                          | Ready for `/10x-plan` | Notes |
-| ---------- | ------------------------------------ | ---------------------------------------------------------------- | ---------------------- | ----- |
-| F-01       | role-and-competency-model-foundation | Add Employee/Competence Leader roles + seed the competency model | yes                    | —     |
-| S-01       | employee-self-assessment             | Employee self-assessment: view model, score, draft, submit       | yes                    | — |
-| S-02       | leader-review-and-approval           | Competence Leader review & approval of a submitted assessment    | no                     | Blocked on S-01, F-01 |
-| S-03       | ai-development-plan                  | AI-generated development plan from approved gaps                 | no                     | Blocked on S-02 |
+| Roadmap ID | Change ID                  | Suggested issue title                                      | Ready for `/10x-plan` | Notes |
+| ---------- | ---------------------------- | -------------------------------------------------------------- | ---------------------- | ----- |
+| S-04       | leader-team-gap-view         | Leader landing page: team-wide competency gap ranking            | yes                    | —     |
+| S-05       | employee-post-login-redirect | Employee post-login redirect straight to /assessment              | yes                    | —     |
 
 ## Open Roadmap Questions
 
-1. **The PRD's Secondary Success Criterion and the Access Control matrix both imply Competence Leaders should see team-level competency gap coverage across all their reports (not just one submission at a time), but no Functional Requirement specifies building that aggregated view.** Should this become a roadmap slice for this milestone, and if so, what aggregation is expected? — Owner: user. Block: roadmap-wide (no existing slice is blocked by it; resolving it in-scope would add a new slice after S-03).
+(None currently — M-1's one open question, about team-level gap visibility, is what this milestone (M-2) was opened to resolve.)
 
 ## Parked
 
@@ -133,7 +111,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 
 ## Milestone History
 
-(none yet — this is the first milestone)
+- **M-1: First AI development plan** (`first-ai-development-plan`) — closed 2026-09-14. Full assessment-to-plan pipeline shipped end-to-end: role/competency foundation, employee self-assessment, leader review and approval, and the AI-generated development plan (the north star).
 
 ## Done
 
