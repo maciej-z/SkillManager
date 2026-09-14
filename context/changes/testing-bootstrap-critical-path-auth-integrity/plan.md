@@ -538,23 +538,23 @@ needed for existing local data.
 
 #### Automated
 
-- [x] 2.1 `npx supabase db reset` applies cleanly with the new fixture
+- [x] 2.1 `npx supabase db reset` applies cleanly with the new fixture — ff34419
 
 #### Manual
 
-- [x] 2.2 Supabase Studio: Chris's assessment shows the expected returned-state shape
+- [x] 2.2 Supabase Studio: Chris's assessment shows the expected returned-state shape — ff34419
 
 ### Phase 3: Fix + test the live gap (Risk #4)
 
 #### Automated
 
-- [ ] 3.1 `npx supabase db reset` applies the new migration cleanly
-- [ ] 3.2 `npm run test` passes, including the self-approval-rejected assertion
-- [ ] 3.3 Phase 1's smoke test still passes
+- [x] 3.1 `npx supabase db reset` applies the new migration cleanly
+- [x] 3.2 `npm run test` passes, including the self-approval-rejected assertion
+- [x] 3.3 Phase 1's smoke test still passes
 
 #### Manual
 
-- [ ] 3.4 Supabase Studio: confirm the updated WITH CHECK clause
+- [x] 3.4 Supabase Studio: confirm the updated WITH CHECK clause
 
 ### Phase 4: Fix + test the dormant gap (Risk #2)
 
