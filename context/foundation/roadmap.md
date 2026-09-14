@@ -44,7 +44,7 @@ Employees and their Competence Leaders currently have no structured way to asses
 | ID   | Change ID                    | Outcome (user can …)                                                              | Prerequisites | PRD refs | Status |
 | ---- | ----------------------------- | ---------------------------------------------------------------------------------- | -------------- | -------- | ------ |
 | S-04 | leader-team-gap-view           | (as leader) see, immediately after login, a ranked view of the team's most common competency gaps, with a link into the review queue | —              | MS-01    | done |
-| S-05 | employee-post-login-redirect   | (as employee) land directly on the assessment page after logging in                | —              | MS-02    | in-progress |
+| S-05 | employee-post-login-redirect   | (as employee) land directly on the assessment page after logging in                | —              | MS-02    | done |
 
 ## Baseline
 
@@ -88,7 +88,7 @@ No baseline layer is absent or partial in a way that blocks either slice — bot
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Small, self-contained UX change with no data dependency; a good candidate to run in parallel with S-04 on a separate agent if capacity allows.
-- **Status:** in-progress
+- **Status:** done
 
 ## Backlog Handoff
 
@@ -120,3 +120,4 @@ No baseline layer is absent or partial in a way that blocks either slice — bot
 - **S-02: user (Competence Leader) can see assessments submitted by their direct reports, review the scores, add their own comments, and approve the assessment or return it for correction.** — Archived 2026-09-14 → `context/archive/2026-09-13-leader-review-and-approval/`. Lesson: —.
 - **S-03: user (Employee) can view a personalized development plan — the system's identified competency gaps, ranked largest to smallest, with the top 3 each paired with concrete recommended actions — generated immediately after their Competence Leader approves the assessment; the Competence Leader can view the same plan for their report.** — Archived 2026-09-14 → `context/archive/2026-09-14-ai-development-plan/`. Lesson: —.
 - **S-04: user (Competence Leader) lands, immediately after login, on a read-only view ranking the most common competency gaps across their direct reports' approved assessments; from there they can navigate to the review queue (`/reviews`).** — Archived 2026-09-14 → `context/archive/2026-09-14-leader-team-gap-view/`. Lesson: —.
+- **S-05: user (Employee) is redirected straight to `/assessment` immediately after signing in, instead of seeing the generic dashboard.** — Archived 2026-09-14 → `context/archive/2026-09-14-employee-post-login-redirect/`. Lesson: —.
