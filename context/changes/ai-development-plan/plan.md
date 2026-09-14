@@ -252,37 +252,37 @@ Additive migration on top of S-01/S-02's schema; no existing assessment data nee
 
 #### Manual
 
-- [ ] 1.4 Supabase Studio: both new tables exist with the stated columns and the unique (assessment_id) constraint
-- [ ] 1.5 Employee/manager SELECT+INSERT against development_plans succeeds when the assessment is approved
-- [ ] 1.6 An unrelated employee/leader's SELECT returns nothing
+- [x] 1.4 Supabase Studio: both new tables exist with the stated columns and the unique (assessment_id) constraint — 3549568
+- [x] 1.5 Employee/manager SELECT+INSERT against development_plans succeeds when the assessment is approved — 3549568
+- [x] 1.6 An unrelated employee/leader's SELECT returns nothing — 3549568
 
 ### Phase 2: AI integration, gap computation, and generate route
 
 #### Automated
 
-- [x] 2.1 `npm run lint` passes
-- [x] 2.2 `npx astro check` passes (0 errors)
-- [x] 2.3 `npm run build` passes
+- [x] 2.1 `npm run lint` passes — 2132244
+- [x] 2.2 `npx astro check` passes (0 errors) — 2132244
+- [x] 2.3 `npm run build` passes — 2132244
 
 #### Manual
 
-- [x] 2.4 Stub-mode generation for an approved assessment produces a ready plan with correctly ranked gaps and 2-3 stub actions on the top 3
-- [x] 2.5 Triggering generation twice in a row doesn't duplicate the plan or double-call the stub/API
-- [x] 2.6 Generation for a non-approved assessment is rejected (409)
-- [x] 2.7 Generation attempted by an unrelated employee/leader is rejected (404 — RLS hides the row entirely, same accepted pattern as S-02's approve/return routes; not 403 as originally worded)
-- [x] 2.8 A real OPENROUTER_API_KEY produces a genuine, correctly parsed LLM plan
+- [x] 2.4 Stub-mode generation for an approved assessment produces a ready plan with correctly ranked gaps and 2-3 stub actions on the top 3 — 2132244
+- [x] 2.5 Triggering generation twice in a row doesn't duplicate the plan or double-call the stub/API — 2132244
+- [x] 2.6 Generation for a non-approved assessment is rejected (409) — 2132244
+- [x] 2.7 Generation attempted by an unrelated employee/leader is rejected (404 — RLS hides the row entirely, same accepted pattern as S-02's approve/return routes; not 403 as originally worded) — 2132244
+- [x] 2.8 A real OPENROUTER_API_KEY produces a genuine, correctly parsed LLM plan — 2132244
 
 ### Phase 3: Development plan UI
 
 #### Automated
 
-- [ ] 3.1 `npm run lint` passes
-- [ ] 3.2 `npx astro check` passes (0 errors)
-- [ ] 3.3 `npm run build` passes
+- [x] 3.1 `npm run lint` passes
+- [x] 3.2 `npx astro check` passes (0 errors)
+- [x] 3.3 `npm run build` passes
 
 #### Manual
 
-- [ ] 3.4 Approving as a leader results in the plan appearing (generating or ready) on reload
-- [ ] 3.5 The employee's own /assessment view shows the same plan
-- [ ] 3.6 A forced failure shows the error + a working Retry on both views
-- [ ] 3.7 A zero-gap assessment renders the "no gaps identified" state cleanly on both views
+- [x] 3.4 Approving as a leader results in the plan appearing (generating or ready) on reload
+- [x] 3.5 The employee's own /assessment view shows the same plan
+- [x] 3.6 A forced failure shows the error + a working Retry on both views
+- [x] 3.7 A zero-gap assessment renders the "no gaps identified" state cleanly on both views

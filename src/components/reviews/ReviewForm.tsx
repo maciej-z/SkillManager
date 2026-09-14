@@ -42,6 +42,12 @@ export default function ReviewForm({ assessmentId, competencies, scores }: Props
     });
     setBusy(false);
     if (res.ok) {
+      if (action === "approve") {
+        // Fire-and-forget: must never delay or fail the approve flow itself.
+        // The view-time fallback in DevelopmentPlanView picks it up if this
+        // request is lost (navigation, network blip).
+        void fetch(`/api/plans/${assessmentId}/generate`, { method: "POST" });
+      }
       window.location.reload();
     } else {
       const body = (await res.json().catch(() => null)) as { error?: string } | null;

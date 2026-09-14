@@ -2,7 +2,8 @@
 import Layout from "@/layouts/Layout.astro";
 import { createClient } from "@/lib/supabase";
 import ReviewForm from "@/components/reviews/ReviewForm";
-import type { Assessment, AssessmentScore, Competency, Profile } from "@/types";
+import DevelopmentPlanView from "@/components/plan/DevelopmentPlanView";
+import type { Assessment, AssessmentScore, Competency, DevelopmentPlan, DevelopmentPlanGap, Profile } from "@/types";
 
 const { user } = Astro.locals;
 const { id } = Astro.params;
@@ -12,6 +13,8 @@ let assessment: Assessment | null = null;
 let employee: Profile | null = null;
 let competencies: Competency[] = [];
 let scores: AssessmentScore[] = [];
+let developmentPlan: DevelopmentPlan | null = null;
+let developmentPlanGaps: (DevelopmentPlanGap & { competency: Competency })[] = [];
 let loadError: string | null = null;
 
 if (supabase && user && id) {
@@ -56,6 +59,30 @@ if (supabase && user && id) {
       loadError = loadError ?? scoreError.message;
     }
     scores = scoreData ?? [];
+
+    if (assessment.status === "approved") {
+      const { data: planData, error: planError } = await supabase
+        .from("development_plans")
+        .select("*")
+        .eq("assessment_id", assessment.id)
+        .maybeSingle<DevelopmentPlan>();
+      if (planError) {
+        loadError = loadError ?? planError.message;
+      }
+      developmentPlan = planData;
+
+      if (developmentPlan) {
+        const { data: gapData, error: gapError } = await supabase
+          .from("development_plan_gaps")
+          .select("*, competency:competencies(*)")
+          .eq("development_plan_id", developmentPlan.id)
+          .overrideTypes<(DevelopmentPlanGap & { competency: Competency })[], { merge: false }>();
+        if (gapError) {
+          loadError = loadError ?? gapError.message;
+        }
+        developmentPlanGaps = gapData ?? [];
+      }
+    }
   }
 }
 
@@ -103,6 +130,12 @@ const scoresByCompetencyId = new Map(scores.map((s) => [s.competency_id, s]));
               )}
             </div>
           ))}
+          <DevelopmentPlanView
+            client:load
+            assessmentId={assessment.id}
+            plan={developmentPlan}
+            gaps={developmentPlanGaps}
+          />
         </div>
       )
     }
