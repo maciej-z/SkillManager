@@ -21,8 +21,8 @@ SkillManager is a competency assessment and development-planning tool for organi
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/przeprogramowani/10x-astro-starter.git
-cd 10x-astro-starter
+git clone https://github.com/maciej-z/SkillManager.git
+cd SkillManager
 ```
 
 2. Install dependencies:
@@ -53,6 +53,8 @@ npm run dev
 - `npm run lint` - Run ESLint with type-checked rules
 - `npm run lint:fix` - Auto-fix ESLint issues
 - `npm run format` - Run Prettier
+- `npm run test` - Run the integration test suite once (requires local Supabase — see [Supabase Configuration](#supabase-configuration))
+- `npm run test:watch` - Run the test suite in watch mode
 
 ## Project Structure
 
@@ -63,18 +65,21 @@ npm run dev
 │ ├── pages/ # Astro pages
 │ │ └── api/ # API endpoints
 │ ├── components/ # UI components (Astro & React)
+│ ├── lib/ # Services/helpers (Supabase client, AI plan generation, ...)
 │ └── assets/ # Static assets
 ├── public/ # Public assets
+├── supabase/ # Migrations (supabase/migrations) + pilot seed data (seed.sql)
+├── tests/ # Vitest integration tests (RLS + route handlers)
 ├── wrangler.jsonc # Cloudflare Workers config
 ```
 
 ## Supabase Configuration
 
-This project uses [Supabase](https://supabase.com/) for authentication. Environment variables are declared via Astro's `astro:env` schema and are treated as **server-only secrets** — they are never exposed to the client.
+This project uses [Supabase](https://supabase.com/) for authentication and as its Postgres database — the schema (`profiles`, `competency_models`, `competencies`, `assessments`, `assessment_scores`, `development_plans`, `development_plan_gaps`) lives in `supabase/migrations/`, with row-level security enabled on every table. Environment variables are declared via Astro's `astro:env` schema and are treated as **server-only secrets** — they are never exposed to the client.
 
 ### First-time setup (local, no cloud project needed)
 
-Requires [Docker](https://www.docker.com/) and ~7 GB RAM.
+Requires [Docker](https://www.docker.com/) and ~7 GB RAM. The `supabase/` folder (config, migrations, pilot seed data) is already committed to this repo, so there's no `supabase init` step.
 
 1. Create your `.env` file:
 
@@ -82,34 +87,31 @@ Requires [Docker](https://www.docker.com/) and ~7 GB RAM.
 cp .env.example .env
 ```
 
-2. Initialize the local Supabase project (creates a `supabase/` config folder):
-
-```bash
-npx supabase init
-```
-
-3. Start the local stack (downloads Docker images on first run):
+2. Start the local stack and apply migrations + seed data (downloads Docker images on first run):
 
 ```bash
 npx supabase start
+npx supabase db reset
 ```
 
-4. Copy the credentials printed by the CLI into your `.env` and `.dev.vars`:
+3. Copy the credentials printed by `supabase start` into your `.env` and `.dev.vars`:
 
 ```
 SUPABASE_URL=http://127.0.0.1:54321
 SUPABASE_KEY=<anon key from CLI output>
 ```
 
-5. To stop the stack when done:
+4. To stop the stack when done:
 
 ```bash
 npx supabase stop
 ```
 
-The local Studio UI is available at `http://localhost:54323`.
+The local Studio UI is available at `http://localhost:54323`. Re-run `npx supabase db reset` any time you want a clean local database — it re-applies every migration and re-seeds the pilot accounts (`supabase/seed.sql`).
 
-No database tables or migrations are required — this project uses Supabase Auth's built-in `auth.users` table only.
+### AI plan generation (optional)
+
+Set `OPENROUTER_API_KEY` in `.env`/`.dev.vars` to enable real AI-generated development-plan actions (`src/lib/ai.ts`). Without it, the system falls back to a deterministic stub (canned recommended actions) — this is fine for local development, and is what the integration test suite runs against.
 
 ### Using a cloud Supabase project instead
 
@@ -135,16 +137,22 @@ By default Supabase requires email confirmation before a user can sign in. To sk
 
 Users can then sign in immediately after sign-up without clicking a confirmation link.
 
-### Auth routes
+## Routes
 
-| Route                 | Description                                                             |
-| --------------------- | ----------------------------------------------------------------------- |
-| `/auth/signin`        | Email/password sign-in form                                             |
-| `/auth/signup`        | Email/password sign-up form                                             |
-| `/auth/confirm-email` | Post-signup "check your inbox" page                                     |
-| `/dashboard`          | Example protected page (redirects to `/auth/signin` if unauthenticated) |
+| Route                      | Description                                                                                                                                  |
+| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/auth/signin`             | Email/password sign-in form                                                                                                                  |
+| `/auth/signup`             | Email/password sign-up form                                                                                                                  |
+| `/auth/confirm-email`      | Post-signup "check your inbox" page                                                                                                          |
+| `/dashboard`               | Role-based landing page — redirects an Employee straight to `/assessment`; a Competence Leader sees their team's most common competency gaps |
+| `/assessment`              | Employee's self-assessment: score every competency, save as draft, submit for review; view the AI-generated development plan once approved   |
+| `/reviews`                 | Competence Leader's queue of reports' submitted assessments awaiting review                                                                  |
+| `/reviews/[id]`            | Review a single submitted assessment: approve, return for correction, or view it once approved                                               |
+| `/admin`                   | Admin-only hub, linking to profile and competency-model management                                                                           |
+| `/admin/profiles`          | Admin: manage user profiles (role, manager assignment)                                                                                       |
+| `/admin/competency-models` | Admin: manage competency models and their competencies                                                                                       |
 
-Route protection is handled in `src/middleware.ts`. Add paths to the `PROTECTED_ROUTES` array there to require authentication.
+All routes above except `/auth/*` require authentication (redirect to `/auth/signin` otherwise); `/admin/*` additionally requires the `admin` role (redirect to `/dashboard` otherwise). Route protection is handled in `src/middleware.ts` — add paths to the `PROTECTED_ROUTES` array there to require authentication.
 
 ## Deployment
 
@@ -166,7 +174,7 @@ Set `SUPABASE_URL` and `SUPABASE_KEY` as secrets in your Cloudflare dashboard or
 
 ## CI
 
-GitHub Actions runs lint + build on every push and PR to `master`. Configure `SUPABASE_URL` and `SUPABASE_KEY` as repository secrets in GitHub for the build step.
+GitHub Actions (`.github/workflows/ci.yml`) runs on every push and PR to `master`: `astro sync`, lint, then the integration test suite against a local Supabase instance (`supabase start` → `supabase db reset` → `npm run test` → `supabase stop`), and finally the production build. Configure `SUPABASE_URL` and `SUPABASE_KEY` as repository secrets in GitHub for the build step (the test step uses locally-generated credentials, not the repository secrets).
 
 ## License
 
