@@ -1,10 +1,10 @@
 ---
 change_id: leader-team-gap-view
 title: Leader team gap view
-status: impl_reviewed
+status: archived
 created: 2026-09-14
 updated: 2026-09-14
-archived_at: null
+archived_at: 2026-09-14T15:09:50Z
 ---
 
 ## Notes
