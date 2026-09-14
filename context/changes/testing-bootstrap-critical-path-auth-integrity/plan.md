@@ -548,25 +548,25 @@ needed for existing local data.
 
 #### Automated
 
-- [x] 3.1 `npx supabase db reset` applies the new migration cleanly
-- [x] 3.2 `npm run test` passes, including the self-approval-rejected assertion
-- [x] 3.3 Phase 1's smoke test still passes
+- [x] 3.1 `npx supabase db reset` applies the new migration cleanly — d6429fe
+- [x] 3.2 `npm run test` passes, including the self-approval-rejected assertion — d6429fe
+- [x] 3.3 Phase 1's smoke test still passes — d6429fe
 
 #### Manual
 
-- [x] 3.4 Supabase Studio: confirm the updated WITH CHECK clause
+- [x] 3.4 Supabase Studio: confirm the updated WITH CHECK clause — d6429fe
 
 ### Phase 4: Fix + test the dormant gap (Risk #2)
 
 #### Automated
 
-- [ ] 4.1 `npx supabase db reset` applies both new migrations cleanly
-- [ ] 4.2 `npm run test` passes, including the plan-select-rejects-non-approved assertion
-- [ ] 4.3 Prior phases' tests still pass
+- [x] 4.1 `npx supabase db reset` applies both new migrations cleanly
+- [x] 4.2 `npm run test` passes, including the plan-select-rejects-non-approved assertion
+- [x] 4.3 Prior phases' tests still pass
 
 #### Manual
 
-- [ ] 4.4 Supabase Studio: confirm both updated SELECT policies
+- [x] 4.4 Supabase Studio: confirm both updated SELECT policies
 
 ### Phase 5: RLS + route-handler coverage (Risks #1, #2, #4)
 

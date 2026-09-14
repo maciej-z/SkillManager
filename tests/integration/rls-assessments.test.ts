@@ -1,5 +1,6 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, afterEach } from "vitest";
 import { signInAs } from "./helpers/supabase-test-client";
+import { forceAssessmentStatus } from "./helpers/pg-admin";
 import { TEST_USERS, TEST_ASSESSMENTS } from "./helpers/test-users";
 import type { Assessment } from "@/types";
 
@@ -10,6 +11,15 @@ import type { Assessment } from "@/types";
 // already correctly rejects bad sequences, which is exactly why testing
 // through routes alone would not have caught the underlying gap.
 describe("assessments_update_own_draft_only — status-lock integrity", () => {
+  afterEach(async () => {
+    // The second test below legitimately flips Alice's draft to
+    // 'submitted' — no RLS-scoped client can ever revert that (it's the
+    // lock this suite protects), so restore it here via the arrangement-
+    // only pg-admin bypass, keeping repeated `npm run test` runs
+    // independent without requiring a fresh `db reset` each time.
+    await forceAssessmentStatus(TEST_ASSESSMENTS.aliceDraft, "draft");
+  });
+
   it("rejects an employee self-approving their own draft assessment via a direct write", async () => {
     const alice = await signInAs(TEST_USERS.employeeAlice.email);
 
@@ -31,11 +41,6 @@ describe("assessments_update_own_draft_only — status-lock integrity", () => {
     expect(data).toBeNull();
   });
 
-  // Consumes Alice's seeded draft fixture (flips it to 'submitted') — once
-  // submitted, no RLS-scoped client can ever revert it (that's the lock
-  // this suite protects). Re-running the full suite requires a fresh
-  // `npx supabase db reset` first, same as every other phase's automated
-  // verification already assumes.
   it("still allows the legitimate draft -> submitted transition", async () => {
     const alice = await signInAs(TEST_USERS.employeeAlice.email);
 
