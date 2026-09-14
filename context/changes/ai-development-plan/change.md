@@ -1,7 +1,7 @@
 ---
 change_id: ai-development-plan
 title: AI development plan
-status: planned
+status: implementing
 created: 2026-09-14
 updated: 2026-09-14
 archived_at: null

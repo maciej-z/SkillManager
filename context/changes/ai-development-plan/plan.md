@@ -246,9 +246,9 @@ Additive migration on top of S-01/S-02's schema; no existing assessment data nee
 
 #### Automated
 
-- [ ] 1.1 `npx supabase db reset` applies the migration and existing seed with exit code 0
-- [ ] 1.2 `npm run lint` passes
-- [ ] 1.3 `npx astro check` passes (0 errors)
+- [x] 1.1 `npx supabase db reset` applies the migration and existing seed with exit code 0
+- [x] 1.2 `npm run lint` passes
+- [x] 1.3 `npx astro check` passes (0 errors)
 
 #### Manual
 
