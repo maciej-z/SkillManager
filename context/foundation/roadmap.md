@@ -9,7 +9,7 @@ main_goal: speed
 top_blocker: none
 milestone_id: role-based-landing-pages
 milestone_seq: 2
-milestone_status: open
+milestone_status: done
 ---
 
 # Roadmap: SkillManager
@@ -20,7 +20,7 @@ milestone_status: open
 
 ## Milestone
 
-**M-2: Role-based landing pages & team gap visibility** — Status: open
+**M-2: Role-based landing pages & team gap visibility** — Status: done
 
 - **Intent:** Give each role a landing experience suited to what they actually do first — a Competence Leader opens to a read-only ranked view of their team's most common competency gaps (extending the PoC's leader-usefulness bet from a single assessment to the team level), while an Employee is sent straight into their own assessment instead of a generic dashboard.
 - **Source materials:** user description (anchors below). Traces conceptually to `context/foundation/prd.md`'s Access Control matrix row *"View team-level competency gaps/coverage"* (Competence Leader only), which M-1 left as an unresolved Open Roadmap Question since no Functional Requirement specified it.
@@ -112,6 +112,7 @@ No baseline layer is absent or partial in a way that blocks either slice — bot
 ## Milestone History
 
 - **M-1: First AI development plan** (`first-ai-development-plan`) — closed 2026-09-14. Full assessment-to-plan pipeline shipped end-to-end: role/competency foundation, employee self-assessment, leader review and approval, and the AI-generated development plan (the north star).
+- **M-2: Role-based landing pages & team gap visibility** (`role-based-landing-pages`) — closed 2026-09-14. A Competence Leader's `/dashboard` now shows a read-only ranking of the team's most common competency gaps (the north star); an Employee is redirected straight to `/assessment` after login.
 
 ## Done
 
