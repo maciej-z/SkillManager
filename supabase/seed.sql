@@ -62,3 +62,71 @@ insert into public.assessment_scores (assessment_id, competency_id, score, comme
   ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa2', '77777777-7777-7777-7777-777777777774', 4, null),
   ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa2', '77777777-7777-7777-7777-777777777775', 3, null),
   ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa2', '77777777-7777-7777-7777-777777777776', 2, 'Still building confidence here');
+
+-- S-04 manual-test fixtures: extra leaders/employees exercising every
+-- /dashboard state for a Competence Leader, without needing manual Studio
+-- setup. All report up through Senior Leader, alongside the existing
+-- Junior Leader. Alice/Bob above are left untouched so /assessment and
+-- /reviews keep their existing draft/submitted zero-setup coverage.
+insert into auth.users (
+  instance_id, id, aud, role, email, encrypted_password,
+  email_confirmed_at, created_at, updated_at,
+  raw_app_meta_data, raw_user_meta_data,
+  confirmation_token, recovery_token, email_change_token_new, email_change
+) values
+  ('00000000-0000-0000-0000-000000000000', '99999999-9999-9999-9999-999999999991', 'authenticated', 'authenticated', 'leader.dana@skillmanager.test', extensions.crypt('pilot-password', extensions.gen_salt('bf')), now(), now(), now(), '{"provider":"email","providers":["email"]}', '{}', '', '', '', ''),
+  ('00000000-0000-0000-0000-000000000000', '99999999-9999-9999-9999-999999999992', 'authenticated', 'authenticated', 'leader.gina@skillmanager.test', extensions.crypt('pilot-password', extensions.gen_salt('bf')), now(), now(), now(), '{"provider":"email","providers":["email"]}', '{}', '', '', '', ''),
+  ('00000000-0000-0000-0000-000000000000', '99999999-9999-9999-9999-999999999993', 'authenticated', 'authenticated', 'leader.iris@skillmanager.test', extensions.crypt('pilot-password', extensions.gen_salt('bf')), now(), now(), now(), '{"provider":"email","providers":["email"]}', '{}', '', '', '', ''),
+  ('00000000-0000-0000-0000-000000000000', '99999999-9999-9999-9999-999999999994', 'authenticated', 'authenticated', 'employee.frank@skillmanager.test', extensions.crypt('pilot-password', extensions.gen_salt('bf')), now(), now(), now(), '{"provider":"email","providers":["email"]}', '{}', '', '', '', ''),
+  ('00000000-0000-0000-0000-000000000000', '99999999-9999-9999-9999-999999999995', 'authenticated', 'authenticated', 'employee.grace@skillmanager.test', extensions.crypt('pilot-password', extensions.gen_salt('bf')), now(), now(), now(), '{"provider":"email","providers":["email"]}', '{}', '', '', '', ''),
+  ('00000000-0000-0000-0000-000000000000', '99999999-9999-9999-9999-999999999996', 'authenticated', 'authenticated', 'employee.henry@skillmanager.test', extensions.crypt('pilot-password', extensions.gen_salt('bf')), now(), now(), now(), '{"provider":"email","providers":["email"]}', '{}', '', '', '', '')
+on conflict (id) do nothing;
+
+insert into public.profiles (id, role, manager_id, full_name) values
+  ('99999999-9999-9999-9999-999999999991', 'competence_leader', '22222222-2222-2222-2222-222222222222', 'Leader Dana'),
+  ('99999999-9999-9999-9999-999999999992', 'competence_leader', '22222222-2222-2222-2222-222222222222', 'Leader Gina'),
+  ('99999999-9999-9999-9999-999999999993', 'competence_leader', '22222222-2222-2222-2222-222222222222', 'Leader Iris'),
+  ('99999999-9999-9999-9999-999999999994', 'employee', '99999999-9999-9999-9999-999999999991', 'Employee Frank'),
+  ('99999999-9999-9999-9999-999999999995', 'employee', '99999999-9999-9999-9999-999999999991', 'Employee Grace'),
+  ('99999999-9999-9999-9999-999999999996', 'employee', '99999999-9999-9999-9999-999999999992', 'Employee Henry')
+on conflict (id) do update set
+  role = excluded.role,
+  manager_id = excluded.manager_id,
+  full_name = excluded.full_name;
+
+-- Frank + Grace (report to Dana) both have approved assessments with real,
+-- overlapping gaps — Dana's /dashboard exercises the ranked-list state,
+-- including the count>1 case (Technical Craft, shared by both) and the
+-- tie-break-irrelevant single-report case (Mentoring, Frank only). Henry
+-- (reports to Gina) meets or exceeds every competency — Gina's /dashboard
+-- exercises the "team meets expectations" empty state. Iris has zero
+-- direct reports — exercises the "no direct reports" empty state. Senior
+-- Leader's existing report (Junior Leader, who never self-assesses)
+-- already exercises the "no approved assessments yet" empty state.
+insert into public.assessments (id, employee_id, competency_model_id, status, submitted_at, reviewed_by, reviewed_at) values
+  ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb1', '99999999-9999-9999-9999-999999999994', '66666666-6666-6666-6666-666666666666', 'approved', now(), '99999999-9999-9999-9999-999999999991', now()),
+  ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb2', '99999999-9999-9999-9999-999999999995', '66666666-6666-6666-6666-666666666666', 'approved', now(), '99999999-9999-9999-9999-999999999991', now()),
+  ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb3', '99999999-9999-9999-9999-999999999996', '66666666-6666-6666-6666-666666666666', 'approved', now(), '99999999-9999-9999-9999-999999999992', now());
+
+insert into public.assessment_scores (assessment_id, competency_id, score) values
+  -- Frank: gaps in Technical Craft (3 < 4) and Mentoring (1 < 2)
+  ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb1', '77777777-7777-7777-7777-777777777771', 3),
+  ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb1', '77777777-7777-7777-7777-777777777772', 4),
+  ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb1', '77777777-7777-7777-7777-777777777773', 3),
+  ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb1', '77777777-7777-7777-7777-777777777774', 3),
+  ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb1', '77777777-7777-7777-7777-777777777775', 3),
+  ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb1', '77777777-7777-7777-7777-777777777776', 1),
+  -- Grace: gap in Technical Craft only (2 < 4)
+  ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb2', '77777777-7777-7777-7777-777777777771', 4),
+  ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb2', '77777777-7777-7777-7777-777777777772', 4),
+  ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb2', '77777777-7777-7777-7777-777777777773', 2),
+  ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb2', '77777777-7777-7777-7777-777777777774', 3),
+  ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb2', '77777777-7777-7777-7777-777777777775', 4),
+  ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb2', '77777777-7777-7777-7777-777777777776', 2),
+  -- Henry: meets or exceeds every competency, zero gaps
+  ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb3', '77777777-7777-7777-7777-777777777771', 3),
+  ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb3', '77777777-7777-7777-7777-777777777772', 4),
+  ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb3', '77777777-7777-7777-7777-777777777773', 4),
+  ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb3', '77777777-7777-7777-7777-777777777774', 4),
+  ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb3', '77777777-7777-7777-7777-777777777775', 3),
+  ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb3', '77777777-7777-7777-7777-777777777776', 3);

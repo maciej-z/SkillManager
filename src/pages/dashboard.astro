@@ -1,27 +1,161 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import { createClient } from "@/lib/supabase";
+import { computeTeamGapRanking } from "@/lib/team-gaps";
+import type { Assessment, Competency, Profile } from "@/types";
 
-const { user } = Astro.locals;
+const { user, profile } = Astro.locals;
+const supabase = createClient(Astro.request.headers, Astro.cookies);
+
+const isLeader = profile?.role === "competence_leader";
+
+let directReportCount = 0;
+let approvedAssessments: (Assessment & { employee: Profile })[] = [];
+let ranking: ReturnType<typeof computeTeamGapRanking> = [];
+let loadError: string | null = null;
+
+if (isLeader && supabase && user) {
+  const { count, error: countError } = await supabase
+    .from("profiles")
+    .select("id", { count: "exact", head: true })
+    .eq("manager_id", user.id);
+  if (countError) {
+    loadError = countError.message;
+  }
+  directReportCount = count ?? 0;
+
+  if (directReportCount > 0) {
+    const { data: assessmentData, error: assessmentError } = await supabase
+      .from("assessments")
+      .select("*, employee:profiles!assessments_employee_id_fkey!inner(*)")
+      .eq("status", "approved")
+      .eq("employee.manager_id", user.id)
+      .overrideTypes<(Assessment & { employee: Profile })[], { merge: false }>();
+    if (assessmentError) {
+      loadError = loadError ?? assessmentError.message;
+    }
+    approvedAssessments = assessmentData ?? [];
+
+    if (approvedAssessments.length > 0) {
+      const assessmentIds = approvedAssessments.map((a) => a.id);
+      const modelIds = [...new Set(approvedAssessments.map((a) => a.competency_model_id))];
+
+      const { data: scoreData, error: scoreError } = await supabase
+        .from("assessment_scores")
+        .select("assessment_id, competency_id, score")
+        .in("assessment_id", assessmentIds)
+        .overrideTypes<{ assessment_id: string; competency_id: string; score: number }[], { merge: false }>();
+      if (scoreError) {
+        loadError = loadError ?? scoreError.message;
+      }
+
+      const { data: competencyData, error: competencyError } = await supabase
+        .from("competencies")
+        .select("*")
+        .in("competency_model_id", modelIds)
+        .overrideTypes<Competency[], { merge: false }>();
+      if (competencyError) {
+        loadError = loadError ?? competencyError.message;
+      }
+
+      const assessmentById = new Map(approvedAssessments.map((a) => [a.id, a]));
+      const competencyById = new Map((competencyData ?? []).map((c) => [c.id, c]));
+
+      // Union across every referenced competency_model_id (not just one
+      // assessment's model) — each report's assessment is pinned to the
+      // model version in effect when they created it, so a single-model
+      // lookup would silently drop gaps for a report on a superseded model.
+      const entries = (scoreData ?? []).flatMap((s) => {
+        const assessment = assessmentById.get(s.assessment_id);
+        const competency = competencyById.get(s.competency_id);
+        if (!assessment || !competency) {
+          return [];
+        }
+        return [
+          {
+            employee: { id: assessment.employee.id, full_name: assessment.employee.full_name },
+            competency,
+            score: s.score,
+          },
+        ];
+      });
+
+      ranking = computeTeamGapRanking(entries);
+    }
+  }
+}
 ---
 
 <Layout title="Dashboard">
-  <div class="bg-cosmic flex min-h-screen items-center justify-center p-4">
-    <div class="rounded-2xl border border-white/10 bg-white/10 p-8 text-center text-white backdrop-blur-xl">
-      <h1 class="mb-4 bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-3xl font-bold text-transparent">
-        Dashboard
-      </h1>
-      <p class="text-blue-100/80">
-        Welcome, <span class="font-semibold text-white">{user?.email}</span>
-      </p>
-      <p class="mt-2 text-sm text-blue-100/50">This page is only for authenticated users.</p>
-      <form method="POST" action="/api/auth/signout" class="mt-6">
-        <button
-          type="submit"
-          class="rounded-lg border border-white/20 bg-white/10 px-4 py-2 text-sm transition-colors hover:bg-white/20"
-        >
-          Sign out
-        </button>
-      </form>
-    </div>
-  </div>
+  {
+    isLeader && (
+      <div class="mx-auto max-w-3xl p-8">
+        <div class="mb-4 flex items-center justify-between rounded-lg border px-4 py-2 text-sm">
+          <span class="text-muted-foreground">{user?.email}</span>
+          <form method="POST" action="/api/auth/signout">
+            <button type="submit" class="text-blue-600 hover:underline">
+              Sign out
+            </button>
+          </form>
+        </div>
+        <h1 class="my-4 text-2xl font-bold">Team Competency Gaps</h1>
+        {loadError && <p class="mb-4 text-sm text-red-600">Failed to load team data: {loadError}</p>}
+
+        {!loadError && directReportCount === 0 && <p class="text-muted-foreground">You have no direct reports yet.</p>}
+
+        {!loadError && directReportCount > 0 && approvedAssessments.length === 0 && (
+          <p class="text-muted-foreground">Your direct reports don't have any approved assessments yet.</p>
+        )}
+
+        {!loadError && approvedAssessments.length > 0 && ranking.length === 0 && (
+          <p class="text-muted-foreground">Your team meets or exceeds expectations across every competency.</p>
+        )}
+
+        {ranking.length > 0 && (
+          <div class="flex flex-col gap-3">
+            {ranking.map((entry) => (
+              <div class="rounded-lg border p-4">
+                <div class="mb-1 flex items-baseline justify-between">
+                  <span class="font-medium">{entry.competency.name}</span>
+                  <span class="text-muted-foreground text-sm">
+                    {entry.count} {entry.count === 1 ? "report" : "reports"}
+                  </span>
+                </div>
+                <p class="text-muted-foreground text-sm">
+                  {entry.employees.map((e) => e.full_name ?? e.id).join(", ")}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <a href="/reviews" class="mt-6 inline-block text-sm text-blue-600 hover:underline">
+          Go to review queue &rarr;
+        </a>
+      </div>
+    )
+  }
+  {
+    !isLeader && (
+      <div class="bg-cosmic flex min-h-screen items-center justify-center p-4">
+        <div class="rounded-2xl border border-white/10 bg-white/10 p-8 text-center text-white backdrop-blur-xl">
+          <h1 class="mb-4 bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-3xl font-bold text-transparent">
+            Dashboard
+          </h1>
+          <p class="text-blue-100/80">
+            Welcome, <span class="font-semibold text-white">{user?.email}</span>
+          </p>
+          <p class="mt-2 text-sm text-blue-100/50">This page is only for authenticated users.</p>
+          <form method="POST" action="/api/auth/signout" class="mt-6">
+            <button
+              type="submit"
+              class="rounded-lg border border-white/20 bg-white/10 px-4 py-2 text-sm transition-colors hover:bg-white/20"
+            >
+              Sign out
+            </button>
+          </form>
+        </div>
+      </div>
+    )
+  }
 </Layout>
