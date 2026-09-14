@@ -1,8 +1,6 @@
-# 10x Astro Starter
+# SkillManager
 
-![](./public/template.png)
-
-A modern, opinionated starter template for building fast, accessible web applications.
+SkillManager is a competency assessment and development-planning tool for organizations. Employees self-assess against a shared competency model, their Competence Leader reviews and approves the assessment, and the system identifies the gaps that matter and generates a personalized, AI-driven development plan from them — turning ad-hoc spreadsheets and hallway conversations into a structured, trustworthy pipeline for people development and staffing decisions.
 
 ## Tech Stack
 
