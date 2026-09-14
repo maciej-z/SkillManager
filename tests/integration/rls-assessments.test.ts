@@ -61,6 +61,24 @@ describe("assessments_update_own_draft_only — status-lock integrity", () => {
 // fixture that already exists in seed data (Dana is not Bob's manager —
 // Junior Leader is).
 describe("assessments & assessment_scores — ownership and manager boundaries", () => {
+  const mutatedScoreCompetencyId = "77777777-7777-7777-7777-777777777771";
+  let scoreToRestore: number | undefined;
+
+  afterEach(async () => {
+    // Guaranteed cleanup regardless of whether the mutating test below
+    // passed or threw — matching the cleanup discipline used everywhere
+    // else in this change (see the describe block above, and
+    // rls-development-plans.test.ts / routes-assessment-lifecycle.test.ts).
+    if (scoreToRestore === undefined) return;
+    const juniorLeader = await signInAs(TEST_USERS.juniorLeader.email);
+    await juniorLeader
+      .from("assessment_scores")
+      .update({ score: scoreToRestore })
+      .eq("assessment_id", TEST_ASSESSMENTS.bobSubmitted)
+      .eq("competency_id", mutatedScoreCompetencyId);
+    scoreToRestore = undefined;
+  });
+
   it("a non-manager leader cannot read a report's submitted assessment", async () => {
     const dana = await signInAs(TEST_USERS.leaderDana.email);
 
@@ -112,34 +130,26 @@ describe("assessments & assessment_scores — ownership and manager boundaries",
     // real, accepted-by-design behavior so a future migration can't
     // silently tighten or loosen it without this test flagging the change.
     const juniorLeader = await signInAs(TEST_USERS.juniorLeader.email);
-    const competencyId = "77777777-7777-7777-7777-777777777771";
 
     const { data: before } = await juniorLeader
       .from("assessment_scores")
       .select("score")
       .eq("assessment_id", TEST_ASSESSMENTS.bobSubmitted)
-      .eq("competency_id", competencyId)
+      .eq("competency_id", mutatedScoreCompetencyId)
       .single<{ score: number }>();
-    const originalScore = before?.score;
+    // Registered before the mutating call, not after — if the update or
+    // an assertion below throws, afterEach still restores this value.
+    scoreToRestore = before?.score;
 
     const { data: updated, error } = await juniorLeader
       .from("assessment_scores")
       .update({ score: 5 })
       .eq("assessment_id", TEST_ASSESSMENTS.bobSubmitted)
-      .eq("competency_id", competencyId)
+      .eq("competency_id", mutatedScoreCompetencyId)
       .select("score")
       .single<{ score: number }>();
 
     expect(error).toBeNull();
     expect(updated?.score).toBe(5);
-
-    // Restore — Junior Leader is authorized to write this row any number
-    // of times while the assessment stays 'submitted', so no pg-admin
-    // bypass is needed to clean up.
-    await juniorLeader
-      .from("assessment_scores")
-      .update({ score: originalScore })
-      .eq("assessment_id", TEST_ASSESSMENTS.bobSubmitted)
-      .eq("competency_id", competencyId);
   });
 });

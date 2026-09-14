@@ -1,7 +1,7 @@
 ---
 change_id: testing-bootstrap-critical-path-auth-integrity
 title: Bootstrap test infra and lock down critical-path auth integrity
-status: implemented
+status: impl_reviewed
 created: 2026-09-14
 updated: 2026-09-14
 archived_at: null

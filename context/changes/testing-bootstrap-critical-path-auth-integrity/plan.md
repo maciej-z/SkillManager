@@ -244,7 +244,7 @@ whole chain works before anything else is built on it.
 
 **Intent**: Build a minimal `APIContext`-shaped object for calling route handlers directly, and mock `@/lib/supabase` to inject a signed-in client.
 
-**Contract**: `buildContext({ user, profile, client, params, body })` returns an object with `locals: { user, profile }`, `params`, a `request` (constructed via `new Request(url, { method, body: body ? JSON.stringify(body) : undefined })`), and a no-op `cookies` stub (routes never read cookies directly — only `createClient` does, and that's mocked). A documented pattern for `vi.mock("@/lib/supabase", () => ({ createClient: () => client }))` per test file, since the mock factory needs the per-test signed-in client.
+**Contract**: `buildContext({ client, params, method, url, body })` derives `locals.user`/`locals.profile` itself from the signed-in `client` (via `client.auth.getUser()` + a `profiles` query) rather than taking them as separate params — this guarantees `locals` can never drift out of sync with the client actually used. Returns an object with `locals: { user, profile }`, `params`, a `request` (constructed via `new Request(url, { method, body: body !== undefined ? JSON.stringify(body) : undefined })`), and a no-op `cookies` stub (routes never read cookies directly — only `createClient` does, and that's mocked). A documented pattern for `vi.mock("@/lib/supabase", () => ({ createClient: () => clientHolder.current }))` per test file, using a shared mutable `clientHolder` since the mock factory needs the per-test signed-in client.
 
 #### 7. Harness smoke test
 
@@ -369,7 +369,7 @@ Implementation Details.
 
 **Intent**: Prove the fix — approved-then-forced-back-to-submitted is the only way to exercise the new clause.
 
-**Contract**: As `employeeBob` (or another employee with an approved assessment + generated plan from existing fixtures — Frank/Grace under Dana), confirm the plan is visible via the normal client. Use `pg-admin`'s `forceAssessmentStatus` to set the parent assessment back to `'submitted'`. Re-query as the same employee via the normal client — assert the plan (and its gaps) are no longer returned. Restore or use a disposable transaction/rollback so this doesn't corrupt other tests' fixtures (see Testing Strategy).
+**Contract**: `supabase/seed.sql` has no seeded `development_plans` rows (plans are only ever created live, per the codebase's own convention). As `employeeFrank` (approved assessment), create a plan + gap directly via the normal authenticated client, confirm it's visible via that same client. Use `pg-admin`'s `forceAssessmentStatus` to set the parent assessment back to `'submitted'`. Re-query as Frank via the normal client — assert the plan (and its gaps) are no longer returned. Restore the assessment status and delete the created plan afterward (via `pg-admin`, since `development_plans` has no DELETE policy) so this doesn't corrupt other tests' fixtures (see Testing Strategy).
 
 ### Success Criteria:
 
@@ -410,7 +410,7 @@ route-handler regression tests for every status-transition endpoint and
 
 **Intent**: Cover Risk #1's ownership/manager scoping on the plan tables, beyond the status-gate fix already tested.
 
-**Contract**: Using existing Frank/Grace (report to Dana) and Henry (reports to Gina) fixtures: as `leaderGina`, attempt to read Frank's development plan — assert empty (Gina isn't Frank's manager). As `employeeAlice` (unrelated employee), attempt to read Frank's plan — assert empty.
+**Contract**: `supabase/seed.sql` has no seeded `development_plans` rows (plans are only ever created live, per the codebase's own convention — see research.md), so the test creates one itself via a direct authenticated insert on Frank's approved assessment (reusing the Phase 4 test's own creation pattern), then: as `leaderGina`, attempt to read it — assert empty (Gina isn't Frank's manager). As `employeeAlice` (unrelated employee), attempt to read it — assert empty.
 
 #### 3. Route-handler regression tests
 
@@ -584,7 +584,7 @@ needed for existing local data.
 
 #### Automated
 
-- [x] 6.1 `.github/workflows/ci.yml` is valid — b8fb591
+- [x] 6.1 `.github/workflows/ci.yml` is valid — 9acdd4c
 - [x] 6.2 A CI run completes the new test step successfully — b8fb591
 
 #### Manual
