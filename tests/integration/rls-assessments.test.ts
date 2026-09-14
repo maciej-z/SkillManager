@@ -55,3 +55,91 @@ describe("assessments_update_own_draft_only — status-lock integrity", () => {
     expect(data?.status).toBe("submitted");
   });
 });
+
+// Risk #1 (test-plan.md §2): general ownership/manager-boundary coverage on
+// assessments and assessment_scores, using the cross-manager negative
+// fixture that already exists in seed data (Dana is not Bob's manager —
+// Junior Leader is).
+describe("assessments & assessment_scores — ownership and manager boundaries", () => {
+  it("a non-manager leader cannot read a report's submitted assessment", async () => {
+    const dana = await signInAs(TEST_USERS.leaderDana.email);
+
+    const { data, error } = await dana
+      .from("assessments")
+      .select("*")
+      .eq("id", TEST_ASSESSMENTS.bobSubmitted)
+      .maybeSingle<Assessment>();
+
+    expect(error).toBeNull();
+    expect(data).toBeNull();
+  });
+
+  it("a non-manager leader cannot approve a report's submitted assessment", async () => {
+    const dana = await signInAs(TEST_USERS.leaderDana.email);
+
+    const { data, error } = await dana
+      .from("assessments")
+      .update({ status: "approved", reviewed_by: TEST_USERS.leaderDana.id, reviewed_at: new Date().toISOString() })
+      .eq("id", TEST_ASSESSMENTS.bobSubmitted)
+      .select();
+
+    // USING excludes the row entirely (Dana isn't Bob's manager) — a
+    // silent zero-rows match, not an RLS-violation error. Different shape
+    // from the WITH CHECK failure above; both are real rejection paths.
+    expect(error).toBeNull();
+    expect(data).toEqual([]);
+  });
+
+  it("an employee cannot edit their own scores after submission", async () => {
+    const bob = await signInAs(TEST_USERS.employeeBob.email);
+
+    const { data, error } = await bob
+      .from("assessment_scores")
+      .update({ score: 1 })
+      .eq("assessment_id", TEST_ASSESSMENTS.bobSubmitted)
+      .eq("competency_id", "77777777-7777-7777-7777-777777777771")
+      .select();
+
+    expect(error).toBeNull();
+    expect(data).toEqual([]);
+  });
+
+  it("characterizes the documented, accepted gap: a manager's direct write CAN touch score, not just leader_comment", async () => {
+    // assessment_scores_update_leader_review authorizes the whole row —
+    // RLS has no column-level granularity here (see the policy's own
+    // migration comment). Only the app route (approve.ts) restricts a
+    // leader's write to { leader_comment }. This test characterizes that
+    // real, accepted-by-design behavior so a future migration can't
+    // silently tighten or loosen it without this test flagging the change.
+    const juniorLeader = await signInAs(TEST_USERS.juniorLeader.email);
+    const competencyId = "77777777-7777-7777-7777-777777777771";
+
+    const { data: before } = await juniorLeader
+      .from("assessment_scores")
+      .select("score")
+      .eq("assessment_id", TEST_ASSESSMENTS.bobSubmitted)
+      .eq("competency_id", competencyId)
+      .single<{ score: number }>();
+    const originalScore = before?.score;
+
+    const { data: updated, error } = await juniorLeader
+      .from("assessment_scores")
+      .update({ score: 5 })
+      .eq("assessment_id", TEST_ASSESSMENTS.bobSubmitted)
+      .eq("competency_id", competencyId)
+      .select("score")
+      .single<{ score: number }>();
+
+    expect(error).toBeNull();
+    expect(updated?.score).toBe(5);
+
+    // Restore — Junior Leader is authorized to write this row any number
+    // of times while the assessment stays 'submitted', so no pg-admin
+    // bypass is needed to clean up.
+    await juniorLeader
+      .from("assessment_scores")
+      .update({ score: originalScore })
+      .eq("assessment_id", TEST_ASSESSMENTS.bobSubmitted)
+      .eq("competency_id", competencyId);
+  });
+});

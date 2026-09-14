@@ -422,7 +422,7 @@ route-handler regression tests for every status-transition endpoint and
 - `submit.ts` called twice on the same (now-submitted) assessment → second call returns 409.
 - `approve.ts` called on an already-`approved` assessment → 409.
 - `return.ts` called on an already-`approved` assessment → 409.
-- `approve.ts`/`return.ts` called by `leaderDana` (non-manager) on Bob's `submitted` assessment → 403.
+- `approve.ts`/`return.ts` called by `leaderDana` (non-manager) on Bob's `submitted` assessment → 404 (RLS's `assessments_select_leader` hides the row before the route's own manager check runs — verified during implementation, matches the archived S-02 plan's documented behavior; not 403 as originally assumed).
 - `generate.ts` called on a `submitted` (not approved) assessment → 409.
 - `generate.ts` called twice concurrently (via `Promise.all`) on an approved assessment (Frank's) → both resolve without error, and a subsequent count query confirms exactly one `development_plans` row exists for that assessment. Run with `OPENROUTER_API_KEY` unset (per the codebase's existing null-tolerant stub convention) so generation is deterministic and makes no real network call.
 
@@ -560,25 +560,25 @@ needed for existing local data.
 
 #### Automated
 
-- [x] 4.1 `npx supabase db reset` applies both new migrations cleanly
-- [x] 4.2 `npm run test` passes, including the plan-select-rejects-non-approved assertion
-- [x] 4.3 Prior phases' tests still pass
+- [x] 4.1 `npx supabase db reset` applies both new migrations cleanly — a6db5cb
+- [x] 4.2 `npm run test` passes, including the plan-select-rejects-non-approved assertion — a6db5cb
+- [x] 4.3 Prior phases' tests still pass — a6db5cb
 
 #### Manual
 
-- [x] 4.4 Supabase Studio: confirm both updated SELECT policies
+- [x] 4.4 Supabase Studio: confirm both updated SELECT policies — a6db5cb
 
 ### Phase 5: RLS + route-handler coverage (Risks #1, #2, #4)
 
 #### Automated
 
-- [ ] 5.1 `npm run test` passes with all new assertions
-- [ ] 5.2 `npm run lint` passes
-- [ ] 5.3 Full suite runtime stays reasonable
+- [x] 5.1 `npm run test` passes with all new assertions
+- [x] 5.2 `npm run lint` passes
+- [x] 5.3 Full suite runtime stays reasonable
 
 #### Manual
 
-- [ ] 5.4 Spot-check: revert a fix/logic and confirm the corresponding test fails
+- [x] 5.4 Spot-check: revert a fix/logic and confirm the corresponding test fails
 
 ### Phase 6: CI wiring + cookbook
 
