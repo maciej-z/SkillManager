@@ -148,6 +148,15 @@ None — no schema changes. Purely additive read-side logic on top of S-01/S-02'
 - Prior implementation: `context/archive/2026-09-14-ai-development-plan/plan.md` (S-03 — the per-employee gap-computation formula and the "extract pure logic into its own module" pattern this plan reuses)
 - Prior implementation: `context/archive/2026-09-13-leader-review-and-approval/plan.md` (S-02 — the `employee:profiles!...!inner(*)` direct-reports query pattern and the RLS this plan depends on without changing)
 
+## Addendum (post-implementation)
+
+During Phase 2 manual testing, four additional changes landed alongside the planned `dashboard.astro` work — all explicit user requests, not spontaneous scope creep, and verified correctly scoped by implementation review:
+
+- `src/pages/api/auth/signin.ts` — post-login redirect target fixed from `/` to `/dashboard` (without this, the plan's own Desired End State — "when a Competence Leader logs in... `/dashboard`" — was unreachable in practice).
+- `src/pages/dashboard.astro` — a sign-out bar (email + Sign out) added at the top of the leader branch, which otherwise had no way to sign out.
+- `src/components/Welcome.astro` — homepage rebrand ("Welcome to SkillManager", feature tiles removed).
+- `supabase/seed.sql` — new fixtures (3 leaders, 3 employees) covering every `/dashboard` state without manual Studio setup.
+
 ## Progress
 
 > Convention: `- [ ]` pending, `- [x]` done. Append ` — <commit sha>` when a step lands. Do not rename step titles. See `references/progress-format.md`.

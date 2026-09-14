@@ -1,6 +1,6 @@
 import type { Competency } from "@/types";
 
-export interface TeamGapRankingEntry {
+interface TeamGapRankingEntry {
   competency: Competency;
   count: number;
   employees: { id: string; full_name: string | null }[];
