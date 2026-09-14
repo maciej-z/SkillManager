@@ -43,7 +43,7 @@ Employees and their Competence Leaders currently have no structured way to asses
 
 | ID   | Change ID                    | Outcome (user can …)                                                              | Prerequisites | PRD refs | Status |
 | ---- | ----------------------------- | ---------------------------------------------------------------------------------- | -------------- | -------- | ------ |
-| S-04 | leader-team-gap-view           | (as leader) see, immediately after login, a ranked view of the team's most common competency gaps, with a link into the review queue | —              | MS-01    | ready  |
+| S-04 | leader-team-gap-view           | (as leader) see, immediately after login, a ranked view of the team's most common competency gaps, with a link into the review queue | —              | MS-01    | in-progress |
 | S-05 | employee-post-login-redirect   | (as employee) land directly on the assessment page after logging in                | —              | MS-02    | ready  |
 
 ## Baseline
@@ -76,7 +76,7 @@ No baseline layer is absent or partial in a way that blocks either slice — bot
 - **Unknowns:**
   - The exact aggregation method for "most common gaps" isn't specified (frequency count of reports with that gap vs. average/summed gap size vs. something else). — Owner: user. Block: no — a reasonable default (frequency count, ties broken by average gap size) can be proposed and confirmed at `/10x-plan` time without blocking sequencing.
 - **Risk:** This is the milestone's north star — the team-level extension of the PRD's "leaders find this useful" bet. Sequenced first (alongside S-05, since neither depends on the other) because it's the validation slice for this milestone.
-- **Status:** ready
+- **Status:** in-progress
 
 ### S-05: Employee lands directly on the assessment page after login
 
