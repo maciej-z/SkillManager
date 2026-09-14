@@ -75,8 +75,8 @@ orchestrator updates Status as artifacts appear on disk.
 
 | # | Phase name | Goal (one line) | Risks covered | Test types | Status | Change folder |
 |---|---|---|---|---|---|---|
-| 1 | Bootstrap + critical-path auth integrity | Stand up the test runner and test-user seed infra, then prove RLS locks, the approval guardrail, and status-lock invariants actually hold | #1, #2, #4 | unit + integration | planned | context/changes/testing-bootstrap-critical-path-auth-integrity/ |
-| 2 | Approve/return payload tampering & IDOR | Prove leader review routes can't be tricked into writing beyond their intended columns, and cross-user IDs are rejected | #3 | integration | not started | — |
+| 1 | Bootstrap + critical-path auth integrity | Stand up the test runner and test-user seed infra, then prove RLS locks, the approval guardrail, and status-lock invariants actually hold | #1, #2, #4 | unit + integration | complete | context/changes/testing-bootstrap-critical-path-auth-integrity/ |
+| 2 | Approve/return payload tampering & IDOR | Prove leader review routes can't be tricked into writing beyond their intended columns, and cross-user IDs are rejected | #3 | integration | change opened | context/changes/testing-approve-return-payload-tampering-idor/ |
 | 3 | AI plan generation correctness | Prove generated gaps/ranking match the real computed gap set, the eager+fallback trigger is race-safe, and recommended actions are relevant to their specific gap | #5, #6 | unit + integration + narrow AI-native judge | not started | — |
 | 4 | Team-gap aggregation correctness | Prove the leader's "most common gaps" ranking matches an independently computed oracle and never includes a non-report | #7 | unit | not started | — |
 
