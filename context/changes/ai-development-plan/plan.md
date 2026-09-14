@@ -246,9 +246,9 @@ Additive migration on top of S-01/S-02's schema; no existing assessment data nee
 
 #### Automated
 
-- [x] 1.1 `npx supabase db reset` applies the migration and existing seed with exit code 0
-- [x] 1.2 `npm run lint` passes
-- [x] 1.3 `npx astro check` passes (0 errors)
+- [x] 1.1 `npx supabase db reset` applies the migration and existing seed with exit code 0 — 3549568
+- [x] 1.2 `npm run lint` passes — 3549568
+- [x] 1.3 `npx astro check` passes (0 errors) — 3549568
 
 #### Manual
 
@@ -260,17 +260,17 @@ Additive migration on top of S-01/S-02's schema; no existing assessment data nee
 
 #### Automated
 
-- [ ] 2.1 `npm run lint` passes
-- [ ] 2.2 `npx astro check` passes (0 errors)
-- [ ] 2.3 `npm run build` passes
+- [x] 2.1 `npm run lint` passes
+- [x] 2.2 `npx astro check` passes (0 errors)
+- [x] 2.3 `npm run build` passes
 
 #### Manual
 
-- [ ] 2.4 Stub-mode generation for an approved assessment produces a ready plan with correctly ranked gaps and 2-3 stub actions on the top 3
-- [ ] 2.5 Triggering generation twice in a row doesn't duplicate the plan or double-call the stub/API
-- [ ] 2.6 Generation for a non-approved assessment is rejected (409)
-- [ ] 2.7 Generation attempted by an unrelated employee/leader is rejected (403)
-- [ ] 2.8 A real OPENROUTER_API_KEY produces a genuine, correctly parsed LLM plan
+- [x] 2.4 Stub-mode generation for an approved assessment produces a ready plan with correctly ranked gaps and 2-3 stub actions on the top 3
+- [x] 2.5 Triggering generation twice in a row doesn't duplicate the plan or double-call the stub/API
+- [x] 2.6 Generation for a non-approved assessment is rejected (409)
+- [x] 2.7 Generation attempted by an unrelated employee/leader is rejected (404 — RLS hides the row entirely, same accepted pattern as S-02's approve/return routes; not 403 as originally worded)
+- [x] 2.8 A real OPENROUTER_API_KEY produces a genuine, correctly parsed LLM plan
 
 ### Phase 3: Development plan UI
 

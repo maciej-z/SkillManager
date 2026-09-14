@@ -51,3 +51,26 @@ export interface AssessmentScore {
   updated_at: string;
   leader_comment: string | null;
 }
+
+export type DevelopmentPlanStatus = "pending" | "ready" | "failed";
+
+export interface DevelopmentPlan {
+  id: string;
+  assessment_id: string;
+  status: DevelopmentPlanStatus;
+  raw_response: string | null;
+  error_message: string | null;
+  generated_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DevelopmentPlanGap {
+  id: string;
+  development_plan_id: string;
+  competency_id: string;
+  gap_size: number;
+  rank: number;
+  recommended_actions: string[] | null;
+  created_at: string;
+}
