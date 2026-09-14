@@ -1,7 +1,7 @@
 ---
 change_id: employee-post-login-redirect
 title: Employee post-login redirect
-status: implemented
+status: impl_reviewed
 created: 2026-09-14
 updated: 2026-09-14
 archived_at: null

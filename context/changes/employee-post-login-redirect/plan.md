@@ -96,6 +96,15 @@ None — no schema or data changes.
 - PRD: `context/foundation/prd.md` (M-2's description-sourced charter anchor `MS-02` — not backed by a numbered FR, same as S-04's `MS-01`)
 - Prior implementation: `context/changes/leader-team-gap-view/plan.md` (S-04 — established the `profile.role`-based branching in `dashboard.astro` and fixed `signin.ts`'s redirect target to `/dashboard`, both of which this plan builds directly on)
 
+## Addendum (post-implementation)
+
+During Phase 1 manual testing, four additional changes landed alongside the planned `dashboard.astro` guard — all explicit user requests, not spontaneous scope creep, and verified correctly scoped by implementation review:
+
+- `eslint.config.js` — `@typescript-eslint/no-misused-promises` disabled for `**/*.astro` files. This was made necessary by the plan's own contract: a top-level `return Astro.redirect(...)` in frontmatter (Astro's documented idiom) crashes that rule via an internal ESLint/`astro-eslint-parser` incompatibility.
+- `src/pages/assessment.astro` — the "← Dashboard" link replaced with a sign-out bar (email + Sign out), matching `dashboard.astro`'s leader branch. Necessary because this very change makes `/dashboard` unreachable for employees, leaving the old link dead.
+- `context/foundation/roadmap.md` — a deferred roadmap status flip (S-05 → in-progress) folded into this commit.
+- `supabase/snippets/Untitled query 985.sql` — an unrelated Supabase Studio SQL scratch file, committed at explicit request; `.gitignore` was subsequently updated to exclude this directory going forward.
+
 ## Progress
 
 > Convention: `- [ ]` pending, `- [x]` done. Append ` — <commit sha>` when a step lands. Do not rename step titles. See `references/progress-format.md`.
