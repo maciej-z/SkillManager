@@ -104,13 +104,13 @@ None — no schema or data changes.
 
 #### Automated
 
-- [x] 1.1 `npm run lint` passes
-- [x] 1.2 `npx astro check` passes (0 errors)
-- [x] 1.3 `npm run build` passes
+- [x] 1.1 `npm run lint` passes — 794a033
+- [x] 1.2 `npx astro check` passes (0 errors) — 794a033
+- [x] 1.3 `npm run build` passes — 794a033
 
 #### Manual
 
-- [x] 1.4 As Employee (Alice or Bob), sign in and confirm landing directly on `/assessment`, never seeing `/dashboard`'s content
-- [x] 1.5 As a signed-in Employee, manually navigate to `/dashboard` mid-session and confirm the same redirect fires
-- [x] 1.6 As Competence Leader, confirm `/dashboard` still shows the S-04 team gap view unaffected
-- [x] 1.7 As Admin, confirm `/dashboard` still shows the generic welcome unaffected
+- [x] 1.4 As Employee (Alice or Bob), sign in and confirm landing directly on `/assessment`, never seeing `/dashboard`'s content — 794a033
+- [x] 1.5 As a signed-in Employee, manually navigate to `/dashboard` mid-session and confirm the same redirect fires — 794a033
+- [x] 1.6 As Competence Leader, confirm `/dashboard` still shows the S-04 team gap view unaffected — 794a033
+- [x] 1.7 As Admin, confirm `/dashboard` still shows the generic welcome unaffected — 794a033
