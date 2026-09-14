@@ -276,13 +276,13 @@ Additive migration on top of S-01/S-02's schema; no existing assessment data nee
 
 #### Automated
 
-- [x] 3.1 `npm run lint` passes
-- [x] 3.2 `npx astro check` passes (0 errors)
-- [x] 3.3 `npm run build` passes
+- [x] 3.1 `npm run lint` passes — 2311eb9
+- [x] 3.2 `npx astro check` passes (0 errors) — 2311eb9
+- [x] 3.3 `npm run build` passes — 2311eb9
 
 #### Manual
 
-- [x] 3.4 Approving as a leader results in the plan appearing (generating or ready) on reload
-- [x] 3.5 The employee's own /assessment view shows the same plan
-- [x] 3.6 A forced failure shows the error + a working Retry on both views
-- [x] 3.7 A zero-gap assessment renders the "no gaps identified" state cleanly on both views
+- [x] 3.4 Approving as a leader results in the plan appearing (generating or ready) on reload — 2311eb9
+- [x] 3.5 The employee's own /assessment view shows the same plan — 2311eb9
+- [x] 3.6 A forced failure shows the error + a working Retry on both views — 2311eb9
+- [x] 3.7 A zero-gap assessment renders the "no gaps identified" state cleanly on both views — 2311eb9
