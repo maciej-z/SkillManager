@@ -55,8 +55,8 @@ export const POST: APIRoute = async (context) => {
   // post-approve call, and the view-time fallback from either role) can both
   // reach this route for the same assessment. Whichever insert lands first
   // "claims" generation via the unique(assessment_id) constraint; the loser
-  // sees an empty `.select()` result (DO NOTHING) and just re-reads the
-  // current state instead of generating a second time.
+  // sees an empty `.select()` result (DO NOTHING) and falls through to the
+  // reclaim logic below instead of generating a second time.
   const { data: claimed, error: claimError } = await supabase
     .from("development_plans")
     .upsert({ assessment_id: assessmentId }, { onConflict: "assessment_id", ignoreDuplicates: true })
@@ -66,7 +66,11 @@ export const POST: APIRoute = async (context) => {
     return new Response(JSON.stringify({ error: claimError.message }), { status: 400 });
   }
 
-  if (claimed.length === 0) {
+  let plan: DevelopmentPlan;
+
+  if (claimed.length > 0) {
+    plan = claimed[0];
+  } else {
     const { data: existing, error: existingError } = await supabase
       .from("development_plans")
       .select("*")
@@ -75,10 +79,44 @@ export const POST: APIRoute = async (context) => {
     if (existingError) {
       return new Response(JSON.stringify({ error: existingError.message }), { status: 400 });
     }
-    return new Response(JSON.stringify(existing), { status: 200 });
-  }
+    if (!existing) {
+      return new Response(JSON.stringify({ error: "Development plan not found" }), { status: 404 });
+    }
 
-  const plan = claimed[0];
+    if (existing.status !== "failed") {
+      // Already ready (stays immutable), or genuinely still pending
+      // (another request may still be actively processing it) — nothing to
+      // reclaim, return the current state as-is.
+      return new Response(JSON.stringify(existing), { status: 200 });
+    }
+
+    // Reclaim a failed plan for a retry, race-safely: the `status = "failed"`
+    // guard means only one concurrent Retry can win this update — a losing
+    // request's update affects zero rows and re-reads the current state
+    // instead of regenerating twice.
+    const { data: reclaimed, error: reclaimError } = await supabase
+      .from("development_plans")
+      .update({ status: "pending", error_message: null })
+      .eq("id", existing.id)
+      .eq("status", "failed")
+      .select()
+      .maybeSingle<DevelopmentPlan>();
+    if (reclaimError) {
+      return new Response(JSON.stringify({ error: reclaimError.message }), { status: 400 });
+    }
+    if (!reclaimed) {
+      const { data: current, error: currentError } = await supabase
+        .from("development_plans")
+        .select("*")
+        .eq("id", existing.id)
+        .maybeSingle<DevelopmentPlan>();
+      if (currentError) {
+        return new Response(JSON.stringify({ error: currentError.message }), { status: 400 });
+      }
+      return new Response(JSON.stringify(current), { status: 200 });
+    }
+    plan = reclaimed;
+  }
 
   const { data: competencies, error: competenciesError } = await supabase
     .from("competencies")
@@ -180,12 +218,15 @@ export const POST: APIRoute = async (context) => {
     return new Response(JSON.stringify(updated), { status: 200 });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Plan generation failed";
-    const { data: failed } = await supabase
+    const { data: failed, error: failedUpdateError } = await supabase
       .from("development_plans")
       .update({ status: "failed", error_message: message })
       .eq("id", plan.id)
       .select()
       .maybeSingle<DevelopmentPlan>();
+    if (failedUpdateError) {
+      return new Response(JSON.stringify({ error: failedUpdateError.message }), { status: 500 });
+    }
     return new Response(JSON.stringify(failed), { status: 200 });
   }
 };
