@@ -44,7 +44,7 @@ Employees and their Competence Leaders currently have no structured way to asses
 | ID   | Change ID                    | Outcome (user can …)                                                              | Prerequisites | PRD refs | Status |
 | ---- | ----------------------------- | ---------------------------------------------------------------------------------- | -------------- | -------- | ------ |
 | S-04 | leader-team-gap-view           | (as leader) see, immediately after login, a ranked view of the team's most common competency gaps, with a link into the review queue | —              | MS-01    | in-progress |
-| S-05 | employee-post-login-redirect   | (as employee) land directly on the assessment page after logging in                | —              | MS-02    | ready  |
+| S-05 | employee-post-login-redirect   | (as employee) land directly on the assessment page after logging in                | —              | MS-02    | in-progress |
 
 ## Baseline
 
@@ -88,7 +88,7 @@ No baseline layer is absent or partial in a way that blocks either slice — bot
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Small, self-contained UX change with no data dependency; a good candidate to run in parallel with S-04 on a separate agent if capacity allows.
-- **Status:** ready
+- **Status:** in-progress
 
 ## Backlog Handoff
 

@@ -5,6 +5,11 @@ import { computeTeamGapRanking } from "@/lib/team-gaps";
 import type { Assessment, Competency, Profile } from "@/types";
 
 const { user, profile } = Astro.locals;
+
+if (profile?.role === "employee") {
+  return Astro.redirect("/assessment");
+}
+
 const supabase = createClient(Astro.request.headers, Astro.cookies);
 
 const isLeader = profile?.role === "competence_leader";

@@ -65,6 +65,15 @@ const astroConfig = tseslint.config({
     "astro/no-set-html-directive": "error",
     "astro/no-unused-css-selector": "warn",
     "astro/prefer-class-list-directive": "warn",
+    // astro-eslint-parser represents a frontmatter script's top-level
+    // `return` (Astro's own idiom for early redirects, e.g. `return
+    // Astro.redirect(...)`) in a way that crashes this rule's return-
+    // statement check (nullThrows on a missing parent function node). The
+    // rule's actual purpose — catching promise-returning functions passed
+    // where a void return is expected (e.g. a React onClick handler) —
+    // doesn't apply to .astro frontmatter/templates anyway; that surface
+    // is already covered by the base/react config for .ts/.tsx files.
+    "@typescript-eslint/no-misused-promises": "off",
   },
 });
 

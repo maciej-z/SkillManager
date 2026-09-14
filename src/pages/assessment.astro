@@ -101,7 +101,12 @@ const scoresByCompetencyId = new Map(scores.map((s) => [s.competency_id, s]));
 
 <Layout title="Self-Assessment">
   <div class="mx-auto max-w-3xl p-8">
-    <a href="/dashboard" class="text-sm text-blue-600 hover:underline">&larr; Dashboard</a>
+    <div class="mb-4 flex items-center justify-between rounded-lg border px-4 py-2 text-sm">
+      <span class="text-muted-foreground">{user?.email}</span>
+      <form method="POST" action="/api/auth/signout">
+        <button type="submit" class="text-blue-600 hover:underline"> Sign out </button>
+      </form>
+    </div>
     <h1 class="my-4 text-2xl font-bold">Self-Assessment</h1>
     {loadError && <p class="mb-4 text-sm text-red-600">Failed to load assessment: {loadError}</p>}
 

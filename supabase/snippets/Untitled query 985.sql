@@ -1,0 +1,1 @@
+delete from development_plans where assessment_id = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1';
