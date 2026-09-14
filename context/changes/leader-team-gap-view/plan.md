@@ -164,14 +164,14 @@ None — no schema changes. Purely additive read-side logic on top of S-01/S-02'
 
 #### Automated
 
-- [x] 2.1 `npm run lint` passes
-- [x] 2.2 `npx astro check` passes (0 errors)
-- [x] 2.3 `npm run build` passes
+- [x] 2.1 `npm run lint` passes — a344e91
+- [x] 2.2 `npx astro check` passes (0 errors) — a344e91
+- [x] 2.3 `npm run build` passes — a344e91
 
 #### Manual
 
-- [x] 2.4 Junior Leader's `/dashboard` shows correct ranking, counts, tie-break order, affected-report names, and a working link to `/reviews`
-- [x] 2.5 A leader with zero direct reports sees the "no direct reports" message
-- [x] 2.6 A leader with reports but no approved assessments sees the "no approved assessments yet" message
-- [x] 2.7 A leader whose team meets/exceeds every competency sees the "team meets or exceeds expectations" message
-- [x] 2.8 Employee and Admin dashboards are unaffected
+- [x] 2.4 Junior Leader's `/dashboard` shows correct ranking, counts, tie-break order, affected-report names, and a working link to `/reviews` — a344e91
+- [x] 2.5 A leader with zero direct reports sees the "no direct reports" message — a344e91
+- [x] 2.6 A leader with reports but no approved assessments sees the "no approved assessments yet" message — a344e91
+- [x] 2.7 A leader whose team meets/exceeds every competency sees the "team meets or exceeds expectations" message — a344e91
+- [x] 2.8 Employee and Admin dashboards are unaffected — a344e91
