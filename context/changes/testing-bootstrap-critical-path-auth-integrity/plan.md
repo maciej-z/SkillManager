@@ -585,9 +585,9 @@ needed for existing local data.
 #### Automated
 
 - [x] 6.1 `.github/workflows/ci.yml` is valid
-- [ ] 6.2 A CI run completes the new test step successfully
+- [x] 6.2 A CI run completes the new test step successfully
 
 #### Manual
 
-- [ ] 6.3 Actions run shows the full suite passing, not skipped
-- [ ] 6.4 test-plan.md §6.2/§6.6 read as genuinely useful
+- [x] 6.3 Actions run shows the full suite passing, not skipped
+- [x] 6.4 test-plan.md §6.2/§6.6 read as genuinely useful
