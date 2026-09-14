@@ -16,6 +16,7 @@ export const TEST_USERS = {
   employeeFrank: { email: "employee.frank@skillmanager.test", id: "99999999-9999-9999-9999-999999999994" },
   employeeGrace: { email: "employee.grace@skillmanager.test", id: "99999999-9999-9999-9999-999999999995" },
   employeeHenry: { email: "employee.henry@skillmanager.test", id: "99999999-9999-9999-9999-999999999996" },
+  employeeChris: { email: "employee.chris@skillmanager.test", id: "cccccccc-cccc-cccc-cccc-ccccccccccc1" },
 } as const;
 
 // Seeded assessment ids (supabase/seed.sql), referenced directly by tests
@@ -23,6 +24,7 @@ export const TEST_USERS = {
 export const TEST_ASSESSMENTS = {
   aliceDraft: "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1",
   bobSubmitted: "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa2",
+  chrisReturned: "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa3",
   frankApproved: "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb1",
   graceApproved: "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb2",
   henryApproved: "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb3",

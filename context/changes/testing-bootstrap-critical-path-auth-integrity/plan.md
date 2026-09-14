@@ -526,23 +526,23 @@ needed for existing local data.
 
 #### Automated
 
-- [x] 1.1 `npx supabase start && npx supabase db reset` succeeds
-- [x] 1.2 `npm run test` runs and `tests/integration/smoke.test.ts` passes
-- [x] 1.3 `npm run lint` passes on the new test files
+- [x] 1.1 `npx supabase start && npx supabase db reset` succeeds — de2006a
+- [x] 1.2 `npm run test` runs and `tests/integration/smoke.test.ts` passes — de2006a
+- [x] 1.3 `npm run lint` passes on the new test files — de2006a
 
 #### Manual
 
-- [ ] 1.4 Confirm the smoke test's scoping assertion actually fails if `assessments_select_own` is temporarily broken
+- [x] 1.4 Confirm the smoke test's scoping assertion actually fails if `assessments_select_own` is temporarily broken — de2006a
 
 ### Phase 2: Seed fixture — returned-for-correction state
 
 #### Automated
 
-- [ ] 2.1 `npx supabase db reset` applies cleanly with the new fixture
+- [x] 2.1 `npx supabase db reset` applies cleanly with the new fixture
 
 #### Manual
 
-- [ ] 2.2 Supabase Studio: Chris's assessment shows the expected returned-state shape
+- [x] 2.2 Supabase Studio: Chris's assessment shows the expected returned-state shape
 
 ### Phase 3: Fix + test the live gap (Risk #4)
 

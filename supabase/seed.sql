@@ -130,3 +130,38 @@ insert into public.assessment_scores (assessment_id, competency_id, score) value
   ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb3', '77777777-7777-7777-7777-777777777774', 4),
   ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb3', '77777777-7777-7777-7777-777777777775', 3),
   ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb3', '77777777-7777-7777-7777-777777777776', 3);
+
+-- testing-bootstrap-critical-path-auth-integrity Phase 2: a third Junior
+-- Leader report (Employee Chris) whose assessment was submitted and then
+-- returned for correction — the one assessment-lifecycle state no earlier
+-- seed exercised. Matches exactly what return.ts's update payload produces
+-- (src/pages/api/reviews/[id]/return.ts:94-101): status flips back to
+-- 'draft', submitted_at is preserved (not cleared), leader_comment and
+-- reviewed_by/reviewed_at are set. Scores keep their original values (only
+-- their leader_comment changes) since return.ts never touches score itself.
+insert into auth.users (
+  instance_id, id, aud, role, email, encrypted_password,
+  email_confirmed_at, created_at, updated_at,
+  raw_app_meta_data, raw_user_meta_data,
+  confirmation_token, recovery_token, email_change_token_new, email_change
+) values
+  ('00000000-0000-0000-0000-000000000000', 'cccccccc-cccc-cccc-cccc-ccccccccccc1', 'authenticated', 'authenticated', 'employee.chris@skillmanager.test', extensions.crypt('pilot-password', extensions.gen_salt('bf')), now(), now(), now(), '{"provider":"email","providers":["email"]}', '{}', '', '', '', '')
+on conflict (id) do nothing;
+
+insert into public.profiles (id, role, manager_id, full_name) values
+  ('cccccccc-cccc-cccc-cccc-ccccccccccc1', 'employee', '33333333-3333-3333-3333-333333333333', 'Employee Chris')
+on conflict (id) do update set
+  role = excluded.role,
+  manager_id = excluded.manager_id,
+  full_name = excluded.full_name;
+
+insert into public.assessments (id, employee_id, competency_model_id, status, submitted_at, leader_comment, reviewed_by, reviewed_at) values
+  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa3', 'cccccccc-cccc-cccc-cccc-ccccccccccc1', '66666666-6666-6666-6666-666666666666', 'draft', now(), 'A few scores need another look before I can approve this — see the Mentoring comment.', '33333333-3333-3333-3333-333333333333', now());
+
+insert into public.assessment_scores (assessment_id, competency_id, score, comment, leader_comment) values
+  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa3', '77777777-7777-7777-7777-777777777771', 3, null, null),
+  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa3', '77777777-7777-7777-7777-777777777772', 4, null, null),
+  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa3', '77777777-7777-7777-7777-777777777773', 3, null, null),
+  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa3', '77777777-7777-7777-7777-777777777774', 4, null, null),
+  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa3', '77777777-7777-7777-7777-777777777775', 3, null, null),
+  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa3', '77777777-7777-7777-7777-777777777776', 2, null, 'This reads more like a self-rating than what I saw in practice — can we revisit with a concrete example?');
