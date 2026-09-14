@@ -572,19 +572,19 @@ needed for existing local data.
 
 #### Automated
 
-- [x] 5.1 `npm run test` passes with all new assertions
-- [x] 5.2 `npm run lint` passes
-- [x] 5.3 Full suite runtime stays reasonable
+- [x] 5.1 `npm run test` passes with all new assertions — 76a5c62
+- [x] 5.2 `npm run lint` passes — 76a5c62
+- [x] 5.3 Full suite runtime stays reasonable — 76a5c62
 
 #### Manual
 
-- [x] 5.4 Spot-check: revert a fix/logic and confirm the corresponding test fails
+- [x] 5.4 Spot-check: revert a fix/logic and confirm the corresponding test fails — 76a5c62
 
 ### Phase 6: CI wiring + cookbook
 
 #### Automated
 
-- [ ] 6.1 `.github/workflows/ci.yml` is valid
+- [x] 6.1 `.github/workflows/ci.yml` is valid
 - [ ] 6.2 A CI run completes the new test step successfully
 
 #### Manual

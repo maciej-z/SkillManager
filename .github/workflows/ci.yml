@@ -18,6 +18,17 @@ jobs:
       - run: npm ci
       - run: npx astro sync
       - run: npm run lint
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - run: supabase start
+      - run: supabase db reset
+      - name: Export local Supabase credentials for the test step
+        run: |
+          echo "SUPABASE_URL=$(supabase status -o env | grep '^API_URL=' | cut -d '=' -f2- | tr -d '"')" >> "$GITHUB_ENV"
+          echo "SUPABASE_KEY=$(supabase status -o env | grep '^ANON_KEY=' | cut -d '=' -f2- | tr -d '"')" >> "$GITHUB_ENV"
+      - run: npm run test
+      - run: supabase stop
       - run: npm run build
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}

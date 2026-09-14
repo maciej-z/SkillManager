@@ -126,7 +126,12 @@ the relevant rollout phase ships; before that, the sub-section reads
 
 ### 6.2 Adding an integration test (RLS / route)
 
-- TBD — see §3 Phase 1 for the first RLS-as-different-users pattern and the test-user seed fixture it introduces.
+- **Location**: `tests/integration/`.
+- **Naming**: `rls-<table-or-area>.test.ts` for RLS-focused tests (e.g. `rls-assessments.test.ts`), `routes-<flow>.test.ts` for route-handler tests (e.g. `routes-assessment-lifecycle.test.ts`).
+- **Mocking policy**: RLS tests never mock Supabase — always sign in as a real seeded user (`tests/integration/helpers/supabase-test-client.ts`'s `signInAs`) and hit local Supabase directly, so RLS is genuinely exercised. Route-handler tests mock only `@/lib/supabase` (via `tests/integration/helpers/api-context.ts`'s `clientHolder` pattern) to inject that same signed-in client, skipping Astro's cookie-parsing plumbing — never mock Supabase itself. If the route imports anything reading `astro:env/server` (e.g. `@/lib/ai.ts`), mock that module directly too (see `routes-assessment-lifecycle.test.ts`).
+- **Fixtures**: reuse `tests/integration/helpers/test-users.ts`'s `TEST_USERS`/`TEST_ASSESSMENTS` rather than hardcoding emails/UUIDs. If a test mutates a shared seeded row and no RLS-scoped client can revert it, add `afterEach` cleanup using `tests/integration/helpers/pg-admin.ts` (direct-Postgres, arrangement/cleanup only — never for the assertion itself) so repeated `npm run test` runs stay independent without requiring a fresh `db reset` each time.
+- **Reference test**: `tests/integration/rls-assessments.test.ts` (RLS pattern), `tests/integration/routes-assessment-lifecycle.test.ts` (route-handler pattern).
+- **Run locally**: `npx supabase start && npx supabase db reset && npm run test`.
 
 ### 6.3 Adding an e2e test
 
@@ -143,6 +148,8 @@ the relevant rollout phase ships; before that, the sub-section reads
 ### 6.6 Per-rollout-phase notes
 
 (Filled in as each phase lands.)
+
+- **Phase 1** (`testing-bootstrap-critical-path-auth-integrity`): watch for RLS policies where `WITH CHECK` doesn't mirror the invariant `USING`/the migration's own comment implies — this bug shape hit this codebase three times (two caught before this rollout, one live security gap caught during Phase 1's research: an employee could self-approve their own draft assessment because `assessments_update_own_draft_only`'s `WITH CHECK` only checked `employee_id`, never the resulting `status`). When reviewing or writing a new RLS policy, always check `WITH CHECK` against the same invariant `USING` claims to enforce, not just that some `WITH CHECK` exists. Also: `development_plans`/`development_plan_gaps` have no `DELETE` policy by design ("plans are stable once created") — a test that creates one needs `pg-admin.ts` cleanup, not an RLS-scoped delete.
 
 ## 7. What We Deliberately Don't Test
 
