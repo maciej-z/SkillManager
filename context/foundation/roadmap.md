@@ -43,7 +43,7 @@ Employees and their Competence Leaders currently have no structured way to asses
 | F-01 | role-and-competency-model-foundation | (foundation) roles, leader→report links, and the competency model are in place | —              | FR-001, FR-002, Access Control                    | done |
 | S-01 | employee-self-assessment             | view the competency model and complete + submit a self-assessment            | F-01           | FR-001, FR-002, FR-003, FR-004, FR-005, FR-006, FR-007 | done |
 | S-02 | leader-review-and-approval           | (as leader) review a report's submitted assessment and approve or return it  | S-01, F-01     | FR-008, FR-009, FR-010, FR-011, FR-012            | done |
-| S-03 | ai-development-plan                  | see the AI-generated development plan built from approved gaps               | S-02           | FR-013, FR-014, FR-015, FR-016, FR-017, US-01      | in-progress |
+| S-03 | ai-development-plan                  | see the AI-generated development plan built from approved gaps               | S-02           | FR-013, FR-014, FR-015, FR-016, FR-017, US-01      | done |
 
 ## Baseline
 
@@ -108,7 +108,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** This is the north star: the PoC's Secondary Success Criterion (leaders find the plan genuinely useful, not generic) rides entirely on this slice. Sequenced last since F-01 → S-01 → S-02 all exist purely to produce the approved-gap data this slice consumes.
-- **Status:** in-progress
+- **Status:** done
 
 ## Backlog Handoff
 
@@ -140,3 +140,4 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **F-01: (foundation) user accounts carry an Employee/Competence Leader role plus a leader→report assignment; the competency model (competencies with name, description, and expected proficiency level) is defined and seeded for the pilot group.** — Archived 2026-09-13 → `context/archive/2026-09-13-role-and-competency-model-foundation/`. Lesson: —.
 - **S-01: user can view the competency model applicable to them, score every competency (with an optional comment), save progress as a draft, and submit a completed assessment for review.** — Archived 2026-09-14 → `context/archive/2026-09-13-employee-self-assessment/`. Lesson: —.
 - **S-02: user (Competence Leader) can see assessments submitted by their direct reports, review the scores, add their own comments, and approve the assessment or return it for correction.** — Archived 2026-09-14 → `context/archive/2026-09-13-leader-review-and-approval/`. Lesson: —.
+- **S-03: user (Employee) can view a personalized development plan — the system's identified competency gaps, ranked largest to smallest, with the top 3 each paired with concrete recommended actions — generated immediately after their Competence Leader approves the assessment; the Competence Leader can view the same plan for their report.** — Archived 2026-09-14 → `context/archive/2026-09-14-ai-development-plan/`. Lesson: —.
